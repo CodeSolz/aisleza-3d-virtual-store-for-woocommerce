@@ -1,0 +1,110 @@
+{
+	"id": "boutique",
+	"name": "Boutique",
+	"version": "1.0.0",
+	"engine": 1,
+	"styles": {
+		"ceiling": "slats",
+		"walls": "slats",
+		"feature": "living",
+		"shelving": "oak",
+		"floor": "stone",
+		"entrance": "slats"
+	},
+	"palette": {
+		"sign": "#2f4a3f",
+		"signInk": "#f3ede1",
+		"endPanel": "#7b9585",
+		"wood": "#c9a67c",
+		"woodDark": "#6e5034",
+		"shelfWood": "#c9a67c",
+		"plaster": "#f3ece1",
+		"void": "#3b2c20",
+		"metal": "#1f1d1b",
+		"stone": "#e7dfd2",
+		"soil": "#3a2a1c",
+		"bark": "#6a5238",
+		"led": "#fff0d2",
+		"glass": "#d6e8ee",
+		"counterTop": "#f1ebe0",
+		"belt": "#2d2f36",
+		"screen": "#9fdcc6",
+		"shadow": "#3c2814"
+	},
+	"walls": {
+		"colour": "#e9e1d4",
+		"joint": "#c4b8a6",
+		"entranceColour": "#e9e1d4",
+		"entranceJoint": "#c4b8a6"
+	},
+	"ceiling": {
+		"lights": "linear"
+	},
+	"fonts": {
+		"signs": "serif"
+	},
+	"wood": {
+		"grainDark": "#8c6034",
+		"grainLight": "#ecc896",
+		"seam": "#5a3e22"
+	},
+	"glow": {
+		"wood": "#ffd696",
+		"emissive": "#ffc478",
+		"intensity": 0.45
+	},
+	"floor": {
+		"tones": [ "#e2d5c0", "#ddcfb9", "#e6dac6", "#dbccb5" ],
+		"clouds": [ "#fffaf0", "#beaa8c" ],
+		"speckle": [ "#968269", "#b9a587", "#fffcf6", "#787064" ],
+		"grout": "#b2a084",
+		"tile": 0.9,
+		"roughness": 0.38
+	},
+	"plants": {
+		"greens": [ "#2f5d36", "#3c6e3a", "#4f8240", "#5f9447", "#3a5f30", "#6fa356", "#294d2c" ],
+		"olive": [ "#7d8f62", "#5f7349" ],
+		"rib": "#c8e6a0",
+		"wallBase": "#1d3320",
+		"cove": "#ffdc96"
+	},
+	"outside": {
+		"skyTop": "#a9cfe8",
+		"skyBottom": "#eef4f2",
+		"trees": [ "#6f9a58", "#5d8a4a", "#86ad66" ],
+		"ground": "#cfc8bd",
+		"curb": "#bdb5a8"
+	},
+	"shelfDecor": {
+		"sets": [ "vases", "plant", "towels", "basket", "candles" ],
+		"tones": {
+			"charcoal": "#2c2b29",
+			"cream": "#ece4d6",
+			"sand": "#d7c4a3",
+			"sage": "#8fa596",
+			"stone": "#e2d9c9",
+			"wicker": "#b08a5a",
+			"amber": "#7a4a22"
+		}
+	},
+	"decor": {
+		"trees": true,
+		"gondolaPlants": true,
+		"hangingPlants": true,
+		"bench": true
+	},
+	"lighting": {
+		"background": "#efe5d6",
+		"fogNear": 24,
+		"fogFar": 62,
+		"exposure": 0.95,
+		"environment": 0.5,
+		"sky": "#fff3e0",
+		"ground": "#d8c6aa",
+		"hemisphere": 1.25,
+		"ambient": "#fff6ea",
+		"ambientIntensity": 0.35,
+		"sun": "#ffe4c2",
+		"sunIntensity": 0.85
+	}
+}

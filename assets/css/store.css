@@ -1,0 +1,2472 @@
+/*
+ * Aisleza. Everything is scoped to .aisleza (the root) or .aisleza-* (the flying
+ * image, appended to <body>). Neutral retail palette — ink, warm ivory and the
+ * merchant's accent; type follows the site (font: inherit).
+ *
+ * Depth comes from CSS only: a perspective room (ceiling, side shelving, floor), a wooden
+ * shelving unit with planks drawn by a repeating gradient, and price tags hanging off each
+ * plank. Nothing animates while the shopper is idle.
+ */
+
+/* ---------------------------------------------------------------- Tokens */
+.aisleza {
+	--aisleza-ink: #1b2440;
+	--aisleza-ink-2: #2b3a66;
+	--aisleza-ivory: #faf8f4;
+	--aisleza-canvas: #f2eee7;
+	--aisleza-line: #e2dbcf;
+	--aisleza-muted: #4a4e5e;
+	--aisleza-wall: #efe9df;
+	--aisleza-wood: #b9875a;
+	--aisleza-wood-top: #e3c49b;
+	--aisleza-wood-dark: #7a5433;
+	--aisleza-floor-a: #e8e1d5;
+	--aisleza-floor-b: #d8cebd;
+	--aisleza-ok: #1b6e55;
+	--aisleza-ok-soft: #e2f3ed;
+	--aisleza-err: #a6321f;
+	--aisleza-err-soft: #fbe9e5;
+	--aisleza-focus: #1d4ed8;
+	--aisleza-accent: #d4a24c;
+	--aisleza-accent-ink: #1b2440;
+	--aisleza-section: var(--aisleza-accent);
+	--aisleza-section-ink: var(--aisleza-accent-ink);
+	--aisleza-dir: 1;
+	--aisleza-flip: 1;
+	--aisleza-row: 252px;
+	--aisleza-z: 99990;
+
+	position: relative;
+	box-sizing: border-box;
+	overflow: hidden;
+	isolation: isolate;
+	width: 100%;
+	margin: 0 0 1.5em;
+	color: var(--aisleza-ink);
+	background: var(--aisleza-canvas);
+	font-family: inherit;
+	font-size: 16px;
+	line-height: 1.45;
+	text-align: start;
+}
+
+[dir="rtl"] .aisleza,
+.aisleza[dir="rtl"] {
+	--aisleza-flip: -1;
+}
+
+.aisleza *,
+.aisleza *::before,
+.aisleza *::after {
+	box-sizing: border-box;
+}
+
+.aisleza [hidden] {
+	display: none !important;
+}
+
+.aisleza--duplicate {
+	height: auto;
+	padding: 16px;
+	text-align: center;
+}
+
+.aisleza--theme {
+	height: clamp(560px, 88vh, 940px);
+	border-radius: 18px;
+}
+
+.aisleza--full {
+	height: 100vh;
+	height: 100dvh;
+	margin: 0;
+}
+
+body.admin-bar .aisleza--full {
+	height: calc(100dvh - 32px);
+}
+
+@media (max-width: 782px) {
+	body.admin-bar .aisleza--full {
+		height: calc(100dvh - 46px);
+	}
+}
+
+body.aisleza-fullwindow {
+	margin: 0;
+	background: #f2eee7;
+}
+
+.aisleza-page {
+	margin: 0;
+	padding: 0;
+}
+
+/* Theme resets for the controls the store draws itself. On hover and focus the reset outweighs a
+   theme's button:hover (0,1,1) but only ties with the store's own button styles (0,2,0), which come
+   later and win, so a button never changes font or size under the pointer. */
+.aisleza button,
+.aisleza :where(button):hover,
+.aisleza :where(button):focus,
+.aisleza input,
+.aisleza select {
+	margin: 0;
+	font: inherit;
+	letter-spacing: normal;
+	text-transform: none;
+	text-shadow: none;
+	box-shadow: none;
+}
+
+.aisleza button {
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: none;
+	color: inherit;
+	line-height: inherit;
+	cursor: pointer;
+}
+
+.aisleza img {
+	max-width: 100%;
+	height: auto;
+	border: 0;
+	box-shadow: none;
+}
+
+.aisleza p,
+.aisleza h2,
+.aisleza ul,
+.aisleza dl {
+	margin: 0;
+	padding: 0;
+}
+
+.aisleza ul {
+	list-style: none;
+}
+
+.aisleza a {
+	color: inherit;
+}
+
+.aisleza :focus-visible {
+	outline: 3px solid var(--aisleza-focus);
+	outline-offset: 2px;
+}
+
+.aisleza-sr {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* --------------------------------------------------------------- Buttons */
+.aisleza .aisleza-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 44px;
+	padding: 0 18px;
+	border: 1.5px solid var(--aisleza-ink);
+	border-radius: 999px;
+	background: #fff;
+	color: var(--aisleza-ink);
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 1.2;
+	text-decoration: none;
+	white-space: nowrap;
+	cursor: pointer;
+	transition: background-color .15s, color .15s, transform .15s;
+}
+
+.aisleza .aisleza-btn:hover {
+	background: var(--aisleza-ivory);
+}
+
+.aisleza .aisleza-btn--primary {
+	background: var(--aisleza-ink);
+	color: #fff;
+}
+
+.aisleza .aisleza-btn--primary:hover {
+	background: var(--aisleza-ink-2);
+	color: #fff;
+}
+
+.aisleza .aisleza-btn--ghost {
+	border-color: var(--aisleza-line);
+	background: transparent;
+}
+
+.aisleza .aisleza-btn--big {
+	min-height: 52px;
+	padding: 0 26px;
+	font-size: 16px;
+}
+
+.aisleza .aisleza-btn--tryon {
+	border-color: transparent;
+	background: var(--aisleza-accent);
+	color: var(--aisleza-accent-ink);
+}
+
+.aisleza .aisleza-btn--tryon:hover {
+	background: var(--aisleza-accent);
+	filter: brightness(1.05);
+}
+
+.aisleza .aisleza-btn__spark {
+	width: 16px;
+	height: 16px;
+	background: currentColor;
+	clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%);
+}
+
+.aisleza .aisleza-btn:disabled,
+.aisleza .aisleza-btn[aria-disabled="true"],
+.aisleza .aisleza-btn[aria-busy="true"] {
+	opacity: .55;
+	cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------- Boot */
+.aisleza-boot {
+	display: grid;
+	place-content: center;
+	gap: 8px;
+	height: 100%;
+	min-height: 320px;
+	padding: 24px;
+	text-align: center;
+}
+
+.aisleza-boot__name {
+	font-size: 26px;
+	font-weight: 700;
+}
+
+.aisleza.is-ready .aisleza-boot {
+	display: none;
+}
+
+.aisleza-noscript,
+.aisleza-closed {
+	padding: 24px;
+	text-align: center;
+}
+
+/* ------------------------------------------------------------- Entrance */
+.aisleza-entrance {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	grid-template-rows: 1fr auto;
+	overflow-y: auto;
+	background:
+		radial-gradient(ellipse 60% 40% at 80% 10%, rgba(255, 255, 255, .7), transparent 70%),
+		linear-gradient(#cfe0ea, #e9f0f2 58%, #cbc2b4 58%, #bfb5a6);
+}
+
+.aisleza-facade {
+	position: relative;
+	align-self: end;
+	justify-self: center;
+	width: min(940px, 94%);
+	margin-top: 28px;
+	filter: drop-shadow(0 18px 24px rgba(27, 36, 64, .22));
+}
+
+.aisleza-facade__sign {
+	padding: 14px 20px 12px;
+	border-radius: 12px 12px 0 0;
+	background: var(--aisleza-ink);
+	color: #fff;
+	text-align: center;
+}
+
+.aisleza-facade__sign.has-logo {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 16px;
+}
+
+.aisleza .aisleza-facade__logo {
+	width: auto;
+	max-width: 40%;
+	height: auto;
+	max-height: clamp(36px, 6vw, 64px);
+	object-fit: contain;
+}
+
+.aisleza .aisleza-facade__name {
+	color: #fff;
+	font-size: clamp(22px, 4vw, 40px);
+	font-weight: 700;
+	line-height: 1.15;
+	letter-spacing: .04em;
+	overflow-wrap: anywhere;
+}
+
+.aisleza-awning {
+	height: 44px;
+	background: repeating-linear-gradient(90deg, var(--aisleza-accent) 0 44px, #fffaf0 44px 88px);
+	-webkit-mask: radial-gradient(22px 14px at 22px 100%, transparent 98%, #000) 0 0 / 44px 100%;
+	mask: radial-gradient(22px 14px at 22px 100%, transparent 98%, #000) 0 0 / 44px 100%;
+}
+
+.aisleza-facade__front {
+	display: grid;
+	grid-template-columns: 1fr 1.05fr 1fr;
+	gap: 16px;
+	height: clamp(170px, 32vh, 300px);
+	padding: 14px 16px 0;
+	background: linear-gradient(#fbf8f2, #f1ebe0);
+	border-inline: 10px solid #e3dccf;
+}
+
+.aisleza-window,
+.aisleza-doors {
+	position: relative;
+	overflow: hidden;
+	border: 7px solid var(--aisleza-ink);
+	border-bottom: 0;
+	border-radius: 6px 6px 0 0;
+}
+
+.aisleza-window {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-around;
+	gap: 6px;
+	padding: 8px 8px 0;
+	background:
+		linear-gradient(#fff6e6 0 8%, transparent 8%),
+		linear-gradient(180deg, #f8f1e6, #e8dcc8);
+}
+
+.aisleza-window img {
+	width: 46%;
+	max-height: 82%;
+	object-fit: contain;
+	border-radius: 6px 6px 0 0;
+	background: #fff;
+	box-shadow: 0 8px 16px -8px rgba(0, 0, 0, .45);
+}
+
+.aisleza-window::after,
+.aisleza-door::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, .45) 38%, transparent 46%, transparent 62%, rgba(255, 255, 255, .25) 66%, transparent 70%);
+	pointer-events: none;
+}
+
+.aisleza-doors {
+	background: #2c2a26;
+}
+
+.aisleza-doors__inside {
+	position: absolute;
+	inset: 0;
+	background:
+		radial-gradient(ellipse 70% 30% at 50% 0, rgba(255, 244, 214, .9), transparent 70%),
+		repeating-linear-gradient(180deg, transparent 0 34px, var(--aisleza-wood) 34px 39px),
+		repeating-linear-gradient(90deg, #f2c6a0 0 12px, #b9d3e6 12px 24px, #e8e1d5 24px 34px, #d7a6b8 34px 46px, #f5efe4 46px 58px);
+	opacity: .9;
+}
+
+.aisleza-door {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 50%;
+	border: 3px solid #3a4258;
+	background: linear-gradient(180deg, rgba(210, 228, 238, .78), rgba(180, 205, 220, .68));
+	transition: transform .7s cubic-bezier(.5, 0, .2, 1);
+}
+
+.aisleza-door--a {
+	inset-inline-start: 0;
+}
+
+.aisleza-door--b {
+	inset-inline-end: 0;
+}
+
+.aisleza-doors.is-open .aisleza-door--a {
+	transform: translateX(calc(-94% * var(--aisleza-flip)));
+}
+
+.aisleza-doors.is-open .aisleza-door--b {
+	transform: translateX(calc(94% * var(--aisleza-flip)));
+}
+
+.aisleza-pavement {
+	height: 16px;
+	background: linear-gradient(#a99f90, #b8ad9d);
+}
+
+.aisleza-welcome,
+.aisleza-bay {
+	display: grid;
+	justify-items: center;
+	gap: 14px;
+	padding: 22px 16px 30px;
+	text-align: center;
+}
+
+.aisleza-welcome__lead,
+.aisleza-bay__text {
+	max-width: 46ch;
+	font-size: 17px;
+	color: var(--aisleza-ink);
+}
+
+.aisleza-welcome__alt a {
+	font-weight: 600;
+}
+
+.aisleza-bay__trolley .aisleza-cart-art {
+	width: 140px;
+	height: 116px;
+}
+
+.aisleza-bay:not([hidden]) .aisleza-bay__trolley {
+	animation: aisleza-roll-in .7s cubic-bezier(.3, .7, .3, 1) both;
+}
+
+/* ------------------------------------------------------------- Store shell */
+.aisleza-store {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	background: var(--aisleza-wall);
+}
+
+/* Bars keep their height; only the scene flexes. */
+.aisleza-store > .aisleza-preview-note,
+.aisleza-summary {
+	flex-shrink: 0;
+}
+
+.aisleza .aisleza-preview-note {
+	padding: 6px 16px;
+	background: #fbf1de;
+	color: #8a5a12;
+	font-size: 14px;
+	font-weight: 600;
+	text-align: center;
+}
+
+/* Floating tools on the left of the store (aisles, search, map, list view, size, regular shop). */
+.aisleza-rail {
+	position: absolute;
+	top: 64px;
+	inset-inline-start: 12px;
+	z-index: 8;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 5px;
+	border: 1px solid rgba(27, 36, 64, .08);
+	border-radius: 16px;
+	background: rgba(255, 255, 255, .94);
+	box-shadow: 0 10px 30px -10px rgba(16, 20, 36, .45);
+	-webkit-backdrop-filter: blur(8px);
+	backdrop-filter: blur(8px);
+}
+
+.aisleza .aisleza-rail__btn {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 42px;
+	height: 42px;
+	padding: 0;
+	border: 0;
+	border-radius: 11px;
+	background: transparent;
+	color: var(--aisleza-ink);
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.aisleza .aisleza-rail__btn::before {
+	content: "";
+	width: 21px;
+	height: 21px;
+	background: currentColor;
+	-webkit-mask: var(--icon) center / contain no-repeat;
+	mask: var(--icon) center / contain no-repeat;
+}
+
+.aisleza .aisleza-rail__btn:hover {
+	background: rgba(27, 36, 64, .07);
+}
+
+.aisleza .aisleza-rail__btn[aria-pressed="true"],
+.aisleza .aisleza-rail__btn[aria-expanded="true"] {
+	background: var(--aisleza-ink);
+	color: #fff;
+}
+
+.aisleza .aisleza-rail__btn:focus-visible {
+	outline: 3px solid var(--aisleza-focus);
+	outline-offset: 1px;
+}
+
+.aisleza .aisleza-rail__btn--shop {
+	margin-top: 4px;
+}
+
+.aisleza .aisleza-rail__btn--shop::after {
+	content: "";
+	position: absolute;
+	top: -4px;
+	inset-inline: 8px;
+	height: 1px;
+	background: var(--aisleza-line);
+}
+
+/* The tool's name: a label beside it on hover and keyboard focus (and always its accessible name). */
+.aisleza .aisleza-rail__label {
+	position: absolute;
+	inset-inline-start: calc(100% + 10px);
+	top: 50%;
+	padding: 6px 10px;
+	border-radius: 8px;
+	background: var(--aisleza-ink);
+	color: #fff;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.2;
+	white-space: nowrap;
+	opacity: 0;
+	pointer-events: none;
+	transform: translate(-4px, -50%);
+	transition: opacity .12s, transform .12s;
+}
+
+.aisleza .aisleza-rail__btn:hover .aisleza-rail__label,
+.aisleza .aisleza-rail__btn:focus-visible .aisleza-rail__label {
+	opacity: 1;
+	transform: translate(0, -50%);
+}
+
+.aisleza-rail__btn--menu { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6h16M4 12h16M4 18h10'/%3E%3C/svg%3E"); }
+.aisleza-rail__btn--search { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E"); }
+.aisleza-rail__btn--map { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z'/%3E%3Cpath d='M9 4v14M15 6v14'/%3E%3C/svg%3E"); }
+.aisleza-rail__btn--list { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6h11M9 12h11M9 18h11'/%3E%3Ccircle cx='4.5' cy='6' r='1'/%3E%3Ccircle cx='4.5' cy='12' r='1'/%3E%3Ccircle cx='4.5' cy='18' r='1'/%3E%3C/svg%3E"); }
+.aisleza-rail__btn--shop { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 9h16l-1.5 10.5a1.5 1.5 0 0 1-1.5 1.5H7a1.5 1.5 0 0 1-1.5-1.5z'/%3E%3Cpath d='M8.5 9V7a3.5 3.5 0 0 1 7 0v2'/%3E%3C/svg%3E"); }
+
+/* The drawer: the store name, the search and every aisle. */
+.aisleza-drawer-shade {
+	position: absolute;
+	inset: 0;
+	z-index: 19;
+	background: rgba(12, 15, 26, .45);
+}
+
+.aisleza-drawer {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	inset-inline-start: 0;
+	z-index: 20;
+	display: flex;
+	flex-direction: column;
+	width: min(320px, 86%);
+	background: #fff;
+	box-shadow: 18px 0 40px -18px rgba(12, 15, 26, .5);
+	animation: aisleza-drawer-in .2s cubic-bezier(.2, .8, .2, 1);
+}
+
+.aisleza-drawer[hidden],
+.aisleza-drawer-shade[hidden] {
+	display: none;
+}
+
+@keyframes aisleza-drawer-in {
+	from { transform: translateX(calc(-100% * var(--aisleza-dir))); }
+	to { transform: none; }
+}
+
+.aisleza-drawer__head {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 16px 12px 12px 18px;
+}
+
+.aisleza .aisleza-drawer__name {
+	flex: 1 1 auto;
+	min-width: 0;
+	margin: 0;
+	overflow: hidden;
+	font-size: 19px;
+	font-weight: 700;
+	line-height: 1.2;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.aisleza .aisleza-drawer__close {
+	flex: none;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: var(--aisleza-canvas);
+	color: var(--aisleza-ink);
+	cursor: pointer;
+}
+
+.aisleza .aisleza-drawer__close::before {
+	content: "";
+	display: block;
+	width: 16px;
+	height: 16px;
+	margin: auto;
+	background: currentColor;
+	-webkit-mask: var(--icon) center / contain no-repeat;
+	mask: var(--icon) center / contain no-repeat;
+	--icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 6l12 12M18 6 6 18'/%3E%3C/svg%3E");
+}
+
+.aisleza-search {
+	margin: 0;
+	padding: 0 16px 12px;
+}
+
+.aisleza-search[hidden] {
+	display: none;
+}
+
+.aisleza .aisleza-search__input {
+	width: 100%;
+	height: 44px;
+	padding: 0 16px 0 40px;
+	border: 1.5px solid var(--aisleza-line);
+	border-radius: 12px;
+	background: var(--aisleza-ivory) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7080' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") 13px 50% / 18px no-repeat;
+	color: var(--aisleza-ink);
+	font-size: 15px;
+}
+
+.aisleza .aisleza-search__input:focus {
+	border-color: var(--aisleza-ink);
+	background-color: #fff;
+}
+
+.aisleza-aisles {
+	flex: 1 1 auto;
+	min-height: 0;
+	padding: 4px 0 16px;
+	overflow-y: auto;
+	border-top: 1px solid var(--aisleza-line);
+}
+
+.aisleza .aisleza-aisles__title {
+	margin: 0;
+	padding: 12px 18px 6px;
+	color: var(--aisleza-muted);
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+}
+
+.aisleza-aisles__list {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin: 0;
+	padding: 0 10px;
+	list-style: none;
+}
+
+.aisleza .aisleza-aisle {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	min-height: 46px;
+	padding: 0 12px;
+	border: 0;
+	border-radius: 12px;
+	background: transparent;
+	color: var(--aisleza-ink);
+	font-size: 15px;
+	font-weight: 600;
+	text-align: start;
+	cursor: pointer;
+}
+
+.aisleza .aisleza-aisle:hover {
+	background: var(--aisleza-canvas);
+}
+
+.aisleza .aisleza-aisle:focus-visible {
+	outline: 3px solid var(--aisleza-focus);
+	outline-offset: -3px;
+}
+
+.aisleza-aisle__dot {
+	flex: none;
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	background: var(--aisleza-section);
+	box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(27, 36, 64, .2);
+}
+
+.aisleza .aisleza-aisle[aria-current="true"] {
+	background: var(--aisleza-ink);
+	color: #fff;
+}
+
+.aisleza .aisleza-aisle[aria-current="true"] .aisleza-aisle__dot {
+	box-shadow: 0 0 0 2px var(--aisleza-ink), 0 0 0 3px rgba(255, 255, 255, .5);
+}
+
+.aisleza-aisle__name {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.aisleza-aisle__count {
+	flex: none;
+	min-width: 24px;
+	padding: 2px 8px;
+	border-radius: 999px;
+	background: var(--aisleza-canvas);
+	color: var(--aisleza-muted);
+	font-size: 12px;
+	font-weight: 600;
+	text-align: center;
+}
+
+.aisleza .aisleza-aisle[aria-current="true"] .aisleza-aisle__count {
+	background: rgba(255, 255, 255, .16);
+	color: #fff;
+}
+
+.aisleza .aisleza-aisle--counter {
+	margin-top: 6px;
+}
+
+.aisleza .aisleza-aisle--counter .aisleza-aisle__dot {
+	background: var(--aisleza-ok);
+}
+
+/* --------------------------------------------------------------- Room */
+.aisleza-scene {
+	position: relative;
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow: hidden;
+	perspective: 1100px;
+	perspective-origin: 50% 30%;
+	background: linear-gradient(var(--aisleza-wall), #e6dfd2);
+}
+
+.aisleza-room {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	transform-style: preserve-3d;
+}
+
+.aisleza-room__ceiling {
+	position: absolute;
+	inset: 0 0 auto;
+	height: 64px;
+	background:
+		radial-gradient(ellipse 58px 9px at 50% 26px, #fffbea 60%, rgba(255, 251, 234, 0) 64%) 0 0 / 240px 64px,
+		radial-gradient(ellipse 160px 60px at 50% 30px, rgba(255, 246, 214, .55), transparent 70%) 0 0 / 240px 64px,
+		linear-gradient(#f7f4ee, #ebe4d8);
+	border-bottom: 1px solid rgba(27, 36, 64, .08);
+}
+
+.aisleza-room__wall {
+	position: absolute;
+	top: 64px;
+	bottom: 22%;
+	width: 26%;
+	background:
+		repeating-linear-gradient(180deg, transparent 0 46px, var(--aisleza-wood) 46px 52px, rgba(0, 0, 0, .12) 52px 54px),
+		repeating-linear-gradient(90deg, #e9c9a8 0 18px, #c7d8e4 18px 36px, #efe7da 36px 44px, #dcb3c2 44px 60px, #f3ede2 60px 74px, #b8c7a8 74px 90px),
+		#efe7da;
+	opacity: .78;
+}
+
+.aisleza-room__wall--start {
+	inset-inline-start: 0;
+	transform-origin: left center;
+	transform: rotateY(64deg);
+}
+
+.aisleza-room__wall--end {
+	inset-inline-end: 0;
+	transform-origin: right center;
+	transform: rotateY(-64deg);
+}
+
+[dir="rtl"] .aisleza-room__wall--start {
+	transform-origin: right center;
+	transform: rotateY(-64deg);
+}
+
+[dir="rtl"] .aisleza-room__wall--end {
+	transform-origin: left center;
+	transform: rotateY(64deg);
+}
+
+.aisleza-room__floor {
+	position: absolute;
+	inset-inline: -40%;
+	bottom: -2%;
+	height: 62%;
+	transform-origin: 50% 100%;
+	transform: rotateX(80deg);
+	background:
+		linear-gradient(90deg, transparent 44%, rgba(255, 255, 255, .55) 44% 56%, transparent 56%),
+		repeating-linear-gradient(90deg, var(--aisleza-floor-b) 0 3px, transparent 3px 140px),
+		repeating-linear-gradient(0deg, var(--aisleza-floor-b) 0 3px, transparent 3px 140px),
+		var(--aisleza-floor-a);
+	box-shadow: inset 0 0 160px rgba(0, 0, 0, .12);
+}
+
+/* --------------------------------------------------------------- Stage */
+.aisleza-stage {
+	position: relative;
+	z-index: 1;
+	height: 100%;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	padding: 0 clamp(16px, 9vw, 15%) 150px;
+}
+
+.aisleza-stage.is-arriving {
+	animation: aisleza-arrive .38s cubic-bezier(.2, .7, .2, 1);
+}
+
+.aisleza-sign {
+	display: flex;
+	justify-content: center;
+	padding-top: 22px;
+}
+
+.aisleza-sign__plate {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+	max-width: 100%;
+	padding: 10px 26px;
+	border-radius: 10px;
+	background: var(--aisleza-section);
+	color: var(--aisleza-section-ink);
+	box-shadow: 0 10px 18px -10px rgba(27, 36, 64, .55), inset 0 -3px 0 rgba(0, 0, 0, .12);
+}
+
+.aisleza-sign__plate::before,
+.aisleza-sign__plate::after {
+	content: "";
+	position: absolute;
+	bottom: 100%;
+	width: 2px;
+	height: 22px;
+	background: rgba(27, 36, 64, .45);
+}
+
+.aisleza-sign__plate::before {
+	inset-inline-start: 22%;
+}
+
+.aisleza-sign__plate::after {
+	inset-inline-end: 22%;
+}
+
+.aisleza .aisleza-sign__title {
+	color: inherit;
+	font-size: clamp(20px, 2.4vw, 30px);
+	font-weight: 700;
+	line-height: 1.2;
+	letter-spacing: .02em;
+	overflow-wrap: anywhere;
+}
+
+/* Focus moves to the sign heading after travel (tabindex -1, not a control): no ring. */
+.aisleza .aisleza-sign__title:focus {
+	outline: none;
+}
+
+.aisleza-sign__img {
+	width: 40px;
+	height: 40px;
+	object-fit: cover;
+	border-radius: 50%;
+	border: 2px solid rgba(255, 255, 255, .8);
+}
+
+.aisleza-filters {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 8px;
+	margin-top: 14px;
+}
+
+.aisleza .aisleza-chip {
+	min-height: 44px;
+	padding: 0 16px;
+	border: 1px solid var(--aisleza-line);
+	border-radius: 999px;
+	background: rgba(255, 255, 255, .92);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.aisleza .aisleza-chip[aria-pressed="true"] {
+	border-color: var(--aisleza-ink);
+	background: var(--aisleza-ink);
+	color: #fff;
+}
+
+/* ------------------------------------------------------- Shelving unit */
+.aisleza-shelving {
+	position: relative;
+	max-width: 1180px;
+	margin: 16px auto 0;
+	padding: 4px 18px 46px;
+	border: 10px solid var(--aisleza-wood-dark);
+	border-top: 8px solid var(--aisleza-section);
+	border-radius: 12px 12px 4px 4px;
+	background: linear-gradient(180deg, #fbf8f2, #efe8dc);
+	box-shadow:
+		inset 0 22px 30px -22px rgba(0, 0, 0, .3),
+		inset 12px 0 18px -14px rgba(0, 0, 0, .25),
+		inset -12px 0 18px -14px rgba(0, 0, 0, .25),
+		0 34px 40px -26px rgba(27, 36, 64, .55);
+}
+
+.aisleza-shelf {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+	grid-auto-rows: var(--aisleza-row);
+	gap: 0;
+	background-image: repeating-linear-gradient(180deg,
+		transparent 0 calc(var(--aisleza-row) - 22px),
+		var(--aisleza-wood-top) calc(var(--aisleza-row) - 22px) calc(var(--aisleza-row) - 16px),
+		var(--aisleza-wood) calc(var(--aisleza-row) - 16px) calc(var(--aisleza-row) - 4px),
+		rgba(0, 0, 0, .16) calc(var(--aisleza-row) - 4px) var(--aisleza-row));
+}
+
+.aisleza-item {
+	position: relative;
+	display: flex;
+	min-width: 0;
+	padding: 52px 8px 22px;
+}
+
+.aisleza .aisleza-product {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	border-radius: 10px;
+}
+
+.aisleza-product__display {
+	position: relative;
+	display: flex;
+	flex: 1;
+	min-height: 0;
+	align-items: flex-end;
+	justify-content: center;
+	padding: 0 6px;
+}
+
+.aisleza-product__display::after {
+	content: "";
+	position: absolute;
+	bottom: -3px;
+	left: 18%;
+	right: 18%;
+	height: 8px;
+	border-radius: 50%;
+	background: rgba(0, 0, 0, .22);
+	filter: blur(3px);
+}
+
+.aisleza .aisleza-product__display img {
+	position: relative;
+	z-index: 1;
+	width: auto;
+	max-height: 100%;
+	object-fit: contain;
+	border-radius: 8px;
+	background: #fff;
+	box-shadow: 0 1px 0 rgba(0, 0, 0, .06);
+	transform-origin: 50% 100%;
+	transition: transform .2s ease;
+}
+
+.aisleza .aisleza-product:hover .aisleza-product__display img,
+.aisleza .aisleza-product:focus-visible .aisleza-product__display img {
+	transform: translateY(-6px) scale(1.04);
+}
+
+.aisleza-tag {
+	position: absolute;
+	z-index: 2;
+	top: calc(100% + 5px);
+	inset-inline: 4px;
+	display: grid;
+	gap: 1px;
+	padding: 4px 6px 5px;
+	border: 1px solid #e3d5ae;
+	border-top: 3px solid var(--aisleza-section);
+	border-radius: 3px 3px 7px 7px;
+	background: #fffdf3;
+	box-shadow: 0 6px 10px -8px rgba(0, 0, 0, .5);
+	font-size: 12.5px;
+	line-height: 1.25;
+}
+
+.aisleza-tag__name {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	font-weight: 600;
+}
+
+.aisleza-tag__price {
+	font-size: 14px;
+	font-weight: 700;
+}
+
+.aisleza-tag__was {
+	font-weight: 400;
+	color: var(--aisleza-muted);
+}
+
+.aisleza-badges {
+	position: absolute;
+	z-index: 2;
+	top: 0;
+	inset-inline-start: 4px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 4px;
+}
+
+.aisleza-badge {
+	padding: 2px 8px;
+	border-radius: 999px;
+	font-size: 11.5px;
+	font-weight: 700;
+	line-height: 1.5;
+}
+
+.aisleza-badge--sale {
+	background: #b4301c;
+	color: #fff;
+}
+
+.aisleza-badge--out {
+	background: #4a4e5e;
+	color: #fff;
+}
+
+.aisleza-badge--tryon {
+	background: var(--aisleza-accent);
+	color: var(--aisleza-accent-ink);
+}
+
+.aisleza-item--ghost .aisleza-product__display::before {
+	content: "";
+	width: 70%;
+	height: 80%;
+	border-radius: 8px;
+	background: linear-gradient(90deg, #ece5d9, #f7f2ea, #ece5d9);
+	background-size: 200% 100%;
+}
+
+.aisleza-stage.is-arriving .aisleza-item {
+	animation: aisleza-place .45s cubic-bezier(.2, .7, .2, 1) both;
+	animation-delay: calc(min(var(--aisleza-i, 0), 12) * 28ms);
+}
+
+.aisleza-shelfnav {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	margin-top: 18px;
+}
+
+.aisleza-shelfnav .aisleza-btn {
+	background: rgba(255, 255, 255, .92);
+}
+
+.aisleza-shelfnav__label {
+	font-weight: 600;
+}
+
+.aisleza-notice {
+	display: grid;
+	justify-items: center;
+	gap: 12px;
+	padding: 36px 16px;
+	text-align: center;
+}
+
+.aisleza-notice__actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 8px;
+}
+
+/* --------------------------------------------------------------- Trolley */
+.aisleza-cart-art {
+	position: relative;
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.aisleza-cart-art svg {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+.aisleza-cart-art__fill {
+	fill: var(--aisleza-accent);
+	opacity: .28;
+}
+
+.aisleza-cart-art__frame {
+	fill: none;
+	stroke: var(--aisleza-ink);
+	stroke-width: 6;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.aisleza-cart-art__mesh {
+	fill: none;
+	stroke: var(--aisleza-ink);
+	stroke-width: 2;
+	opacity: .55;
+}
+
+.aisleza-cart-art__wheel {
+	fill: #fff;
+	stroke: var(--aisleza-ink);
+	stroke-width: 5;
+	stroke-dasharray: 9 4;
+	transform-box: fill-box;
+	transform-origin: center;
+}
+
+.aisleza-cart-art__items {
+	position: absolute;
+	top: 12%;
+	inset-inline: 26% 12%;
+	height: 50%;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+}
+
+.aisleza-cart-art__items img {
+	width: 36%;
+	max-width: 44px;
+	aspect-ratio: 1;
+	margin-inline-start: -10%;
+	object-fit: cover;
+	border: 2px solid #fff;
+	border-radius: 6px;
+	background: #fff;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, .25);
+	transform: rotate(calc((var(--aisleza-n, 0) - 1.5) * 9deg)) translateY(calc(var(--aisleza-n, 0) * -2px));
+}
+
+.aisleza-trolley {
+	position: absolute;
+	z-index: 3;
+	bottom: 12px;
+	inset-inline-start: clamp(12px, 3vw, 44px);
+	width: 132px;
+	height: 112px;
+	filter: drop-shadow(0 12px 10px rgba(27, 36, 64, .3));
+	transition: inset-inline-start .8s cubic-bezier(.45, 0, .2, 1);
+}
+
+.aisleza .aisleza-trolley:focus-visible,
+.aisleza .aisleza-summary__trolley:focus-visible {
+	outline-offset: 4px;
+	border-radius: 12px;
+}
+
+.aisleza.is-at-counter .aisleza-trolley {
+	inset-inline-start: calc(100% - 132px - clamp(12px, 3vw, 44px));
+}
+
+.aisleza-trolley.is-rolling {
+	animation: aisleza-roll .75s cubic-bezier(.45, 0, .2, 1);
+}
+
+.aisleza-trolley.is-rolling .aisleza-cart-art__wheel,
+.aisleza.is-at-counter .aisleza-trolley .aisleza-cart-art__wheel {
+	animation: aisleza-spin .75s linear;
+}
+
+.aisleza-trolley.is-arriving {
+	animation: aisleza-roll-in .9s cubic-bezier(.25, .7, .25, 1);
+}
+
+.aisleza-trolley.is-bumped,
+.aisleza-summary__trolley.is-bumped {
+	animation: aisleza-bump .45s ease;
+}
+
+.aisleza-trolley__count {
+	position: absolute;
+	top: -2px;
+	inset-inline-end: -4px;
+	min-width: 28px;
+	height: 28px;
+	padding: 0 7px;
+	border: 2px solid #fff;
+	border-radius: 999px;
+	background: var(--aisleza-ink);
+	color: #fff;
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 24px;
+	text-align: center;
+}
+
+.has-items > .aisleza-trolley__count {
+	background: var(--aisleza-accent);
+	color: var(--aisleza-accent-ink);
+}
+
+/* --------------------------------------------------------------- Summary */
+.aisleza-summary {
+	position: relative;
+	z-index: 4;
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 8px 16px;
+	padding-bottom: max(8px, env(safe-area-inset-bottom));
+	background: #fff;
+	border-top: 1px solid var(--aisleza-line);
+	box-shadow: 0 -10px 24px -20px rgba(27, 36, 64, .5);
+}
+
+.aisleza .aisleza-summary__trolley {
+	position: relative;
+	flex: none;
+	width: 64px;
+	height: 54px;
+}
+
+.aisleza-summary__text {
+	flex: 1;
+	min-width: 0;
+	font-weight: 600;
+}
+
+/* --------------------------------------------------------- Checkout counter */
+.aisleza-shelving.is-counter {
+	border-color: transparent;
+	background: none;
+	box-shadow: none;
+}
+
+.aisleza-counter {
+	display: grid;
+	justify-items: center;
+	gap: 22px;
+	padding: 26px 0 10px;
+}
+
+.aisleza-counter__desk {
+	position: relative;
+	width: min(560px, 100%);
+	height: 150px;
+	margin-top: 96px;
+	border-radius: 10px 10px 4px 4px;
+	background:
+		linear-gradient(var(--aisleza-wood-top) 0 18px, var(--aisleza-wood) 18px 30px, #8c6340 30px);
+	box-shadow: 0 26px 30px -20px rgba(27, 36, 64, .55);
+}
+
+.aisleza-counter__belt {
+	position: absolute;
+	top: 3px;
+	inset-inline: 6% 42%;
+	height: 12px;
+	border-radius: 6px;
+	background: repeating-linear-gradient(90deg, #2d2f36 0 14px, #3b3e47 14px 16px);
+}
+
+.aisleza-counter__register {
+	position: absolute;
+	bottom: calc(100% - 6px);
+	inset-inline-end: 10%;
+	width: 108px;
+	height: 76px;
+	border-radius: 8px 8px 2px 2px;
+	background: linear-gradient(#31384f, var(--aisleza-ink));
+}
+
+.aisleza-counter__register::before {
+	content: "";
+	position: absolute;
+	top: 10px;
+	inset-inline: 12px;
+	height: 26px;
+	border-radius: 4px;
+	background: linear-gradient(#bfe7d8, #8fd0b8);
+}
+
+.aisleza-counter__lamp {
+	position: absolute;
+	bottom: calc(100% + 14px);
+	inset-inline-start: 6%;
+	padding: 6px 18px;
+	border-radius: 8px;
+	background: var(--aisleza-ok);
+	color: #fff;
+	font-weight: 700;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	box-shadow: 0 0 24px rgba(30, 132, 103, .45);
+}
+
+.aisleza-counter__card {
+	display: grid;
+	justify-items: center;
+	gap: 10px;
+	width: min(560px, 100%);
+	padding: 22px;
+	border-radius: 16px;
+	background: #fff;
+	text-align: center;
+	box-shadow: 0 16px 30px -24px rgba(27, 36, 64, .6);
+}
+
+.aisleza-counter__count {
+	font-size: 18px;
+	font-weight: 700;
+}
+
+.aisleza-counter__total strong {
+	font-size: 22px;
+}
+
+/* --------------------------------------------------------------- Dialogs */
+.aisleza-dialog {
+	position: fixed;
+	inset: 0;
+	z-index: var(--aisleza-z);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.aisleza-dialog__backdrop {
+	position: absolute;
+	inset: 0;
+	background: rgba(20, 24, 40, .52);
+	opacity: 0;
+	transition: opacity .2s;
+}
+
+.aisleza-dialog__panel {
+	position: relative;
+	width: min(960px, 94vw);
+	max-height: min(90vh, 880px);
+	max-height: min(90dvh, 880px);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	padding: 26px;
+	border-radius: 18px;
+	background: #fff;
+	box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .6);
+	opacity: 0;
+	transform: translateY(14px) scale(.985);
+	transition: opacity .2s, transform .25s cubic-bezier(.2, .7, .2, 1);
+}
+
+.aisleza-dialog__panel:focus {
+	outline: none;
+}
+
+.aisleza-dialog.is-open .aisleza-dialog__backdrop,
+.aisleza-dialog.is-open .aisleza-dialog__panel {
+	opacity: 1;
+	transform: none;
+}
+
+.aisleza .aisleza-dialog__close {
+	position: absolute;
+	z-index: 2;
+	top: 10px;
+	inset-inline-end: 10px;
+	display: grid;
+	place-items: center;
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	background: var(--aisleza-canvas);
+	font-size: 26px;
+	line-height: 1;
+}
+
+.aisleza .aisleza-dialog__title {
+	margin-bottom: 14px;
+	padding-inline-end: 48px;
+	font-size: 22px;
+	font-weight: 700;
+	line-height: 1.25;
+}
+
+.aisleza .aisleza-dialog__title:focus {
+	outline: none;
+}
+
+.aisleza-dialog--trolley {
+	justify-content: flex-end;
+}
+
+.aisleza-dialog--trolley .aisleza-dialog__panel {
+	width: min(460px, 100vw);
+	height: 100%;
+	max-height: 100%;
+	border-radius: 0;
+	border-start-start-radius: 18px;
+	border-end-start-radius: 18px;
+	transform: translateX(calc(30px * var(--aisleza-flip)));
+}
+
+.aisleza-dialog--map .aisleza-dialog__panel {
+	width: min(720px, 94vw);
+}
+
+/* Product detail */
+.aisleza-pd {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: 28px;
+}
+
+.aisleza-pd__stage {
+	display: grid;
+	place-items: center;
+	aspect-ratio: 1;
+	overflow: hidden;
+	border-radius: 14px;
+	background: var(--aisleza-ivory);
+}
+
+.aisleza .aisleza-pd__img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+.aisleza .aisleza-pd__img.is-placeholder {
+	width: 60%;
+	height: 60%;
+	opacity: .6;
+}
+
+.aisleza-pd__thumbs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 10px;
+}
+
+.aisleza .aisleza-pd__thumb {
+	width: 56px;
+	height: 56px;
+	overflow: hidden;
+	border: 2px solid var(--aisleza-line);
+	border-radius: 10px;
+	background: #fff;
+}
+
+.aisleza .aisleza-pd__thumb img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.aisleza-pd__info {
+	display: grid;
+	align-content: start;
+	gap: 12px;
+}
+
+.aisleza .aisleza-pd__name {
+	padding-inline-end: 48px;
+	font-size: clamp(22px, 2.4vw, 28px);
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.aisleza-pd__name:focus {
+	outline: none;
+}
+
+.aisleza-pd__price {
+	font-size: 22px;
+}
+
+.aisleza-pd__price s {
+	color: var(--aisleza-muted);
+	font-size: 17px;
+}
+
+.aisleza-pd__stock {
+	color: var(--aisleza-ok);
+	font-weight: 600;
+}
+
+.aisleza-pd__stock.is-out {
+	color: var(--aisleza-err);
+}
+
+.aisleza-pd__stock.is-backorder {
+	color: #8a5a12;
+}
+
+.aisleza-pd__desc {
+	color: var(--aisleza-muted);
+}
+
+.aisleza-pd__options {
+	display: grid;
+	gap: 10px;
+}
+
+.aisleza-field {
+	display: grid;
+	gap: 4px;
+}
+
+.aisleza-field label,
+.aisleza-qty__label {
+	font-weight: 600;
+}
+
+.aisleza .aisleza-select {
+	width: 100%;
+	min-height: 46px;
+	padding: 0 12px;
+	border: 1.5px solid var(--aisleza-line);
+	border-radius: 10px;
+	background: #fff;
+	color: var(--aisleza-ink);
+}
+
+.aisleza-qty {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin-top: 4px;
+}
+
+.aisleza .aisleza-qty__step {
+	display: grid;
+	place-items: center;
+	width: 44px;
+	height: 44px;
+	border: 1.5px solid var(--aisleza-line);
+	border-radius: 50%;
+	background: #fff;
+	font-size: 20px;
+	font-weight: 700;
+}
+
+.aisleza .aisleza-qty__step:disabled {
+	opacity: .4;
+	cursor: not-allowed;
+}
+
+.aisleza .aisleza-qty__input {
+	width: 64px;
+	height: 44px;
+	border: 1.5px solid var(--aisleza-line);
+	border-radius: 10px;
+	text-align: center;
+	color: var(--aisleza-ink);
+	background: #fff;
+}
+
+.aisleza-pd__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 4px;
+}
+
+.aisleza-pd__trynote,
+.aisleza-pd__fine {
+	color: var(--aisleza-muted);
+	font-size: 14px;
+}
+
+.aisleza-pd__trynote:empty {
+	display: none;
+}
+
+.aisleza-pd__link a {
+	font-weight: 600;
+}
+
+.aisleza .aisleza-msg {
+	padding: 10px 12px;
+	border-radius: 10px;
+	background: var(--aisleza-canvas);
+	font-size: 15px;
+}
+
+.aisleza .aisleza-msg--ok {
+	background: var(--aisleza-ok-soft);
+	color: var(--aisleza-ok);
+	font-weight: 600;
+}
+
+.aisleza .aisleza-msg--error {
+	margin-bottom: 8px;
+	background: var(--aisleza-err-soft);
+	color: var(--aisleza-err);
+	font-weight: 600;
+}
+
+.aisleza .aisleza-msg__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 8px;
+}
+
+/* Trolley drawer */
+.aisleza-lines {
+	display: grid;
+	gap: 2px;
+}
+
+.aisleza-line {
+	display: grid;
+	grid-template-columns: 64px minmax(0, 1fr);
+	gap: 6px 12px;
+	padding: 12px 0;
+	border-bottom: 1px solid var(--aisleza-line);
+}
+
+.aisleza-line.is-pending {
+	opacity: .55;
+}
+
+.aisleza .aisleza-line__img {
+	width: 64px;
+	height: 64px;
+	object-fit: cover;
+	border-radius: 10px;
+	background: var(--aisleza-ivory);
+}
+
+.aisleza-line__name {
+	font-weight: 700;
+}
+
+.aisleza-line__variation {
+	color: var(--aisleza-muted);
+	font-size: 14px;
+}
+
+.aisleza-line__controls {
+	grid-column: 2;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.aisleza-line__qty {
+	min-width: 32px;
+	font-weight: 700;
+	text-align: center;
+}
+
+.aisleza .aisleza-line__remove {
+	min-height: 44px;
+	padding: 0 8px;
+	color: var(--aisleza-err);
+	font-weight: 600;
+	text-decoration: underline;
+}
+
+.aisleza .aisleza-totals {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 6px;
+	margin: 16px 0 6px;
+	font-size: 17px;
+}
+
+.aisleza-totals dt {
+	font-weight: 600;
+}
+
+.aisleza-totals dd {
+	margin: 0;
+	font-weight: 700;
+	text-align: end;
+}
+
+.aisleza .aisleza-trolley__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 16px;
+}
+
+.aisleza-trolley__actions .aisleza-btn--primary {
+	flex: 1 1 100%;
+}
+
+.aisleza-empty {
+	display: grid;
+	justify-items: center;
+	gap: 12px;
+	padding: 24px 0;
+	text-align: center;
+}
+
+.aisleza-empty__art {
+	width: 120px;
+	height: 100px;
+	opacity: .7;
+}
+
+/* Store map */
+.aisleza-map {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+	gap: 10px;
+}
+
+.aisleza .aisleza-map__aisle {
+	display: grid;
+	gap: 2px;
+	width: 100%;
+	min-height: 76px;
+	padding: 12px 14px;
+	border-radius: 12px;
+	border-top: 6px solid var(--aisleza-section);
+	background: var(--aisleza-ivory);
+	text-align: start;
+}
+
+.aisleza .aisleza-map__aisle[aria-current="true"] {
+	background: var(--aisleza-section);
+	color: var(--aisleza-section-ink);
+}
+
+.aisleza .aisleza-map__aisle--counter {
+	border-top-color: var(--aisleza-ok);
+}
+
+.aisleza-map__name {
+	font-weight: 700;
+}
+
+.aisleza-map__count {
+	font-size: 14px;
+	opacity: .85;
+}
+
+.aisleza .aisleza-map__alt {
+	margin-top: 16px;
+	text-align: center;
+	font-weight: 600;
+}
+
+/* Flying item (appended to <body>) */
+.aisleza-fly {
+	position: fixed;
+	z-index: 99995;
+	object-fit: contain;
+	border-radius: 10px;
+	background: #fff;
+	box-shadow: 0 10px 24px rgba(0, 0, 0, .3);
+	pointer-events: none;
+}
+
+/* ------------------------------------------------------ Walk-in 3D store */
+.aisleza-worldbox {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+}
+
+/* In 3D, the flat shelf wall, painted room and 2D trolley step aside... */
+.aisleza.is-3d:not(.aisleza--list):not(.is-searching) .aisleza-room,
+.aisleza.is-3d:not(.aisleza--list):not(.is-searching) .aisleza-stage,
+.aisleza.is-3d:not(.aisleza--list):not(.is-searching) .aisleza-trolley {
+	display: none;
+}
+
+/* ...and List view or search results replace the 3D store. */
+.aisleza.aisleza--list .aisleza-worldbox,
+.aisleza.is-searching .aisleza-worldbox,
+.aisleza.aisleza--list .aisleza-hud-counter,
+.aisleza.is-searching .aisleza-hud-counter,
+.aisleza.aisleza--list .aisleza-worldlist,
+.aisleza.is-searching .aisleza-worldlist {
+	display: none !important;
+}
+
+.aisleza-world {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+	background: #f3efe8;
+}
+
+.aisleza-world__canvas {
+	display: block;
+	width: 100%;
+	height: 100%;
+	touch-action: none;
+	cursor: grab;
+	outline: none;
+}
+
+/* Add-on HTML laid over the store (addHtml): it never takes the pointer, the canvas does. */
+.aisleza-world__css {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+	pointer-events: none;
+}
+
+.aisleza-world__css * {
+	pointer-events: none;
+}
+
+.aisleza-world__canvas:active {
+	cursor: grabbing;
+}
+
+.aisleza-world__canvas:focus-visible {
+	box-shadow: inset 0 0 0 3px var(--aisleza-focus);
+}
+
+.aisleza-world__where {
+	position: absolute;
+	top: 12px;
+	inset-inline-start: 12px;
+	max-width: calc(100% - 220px);
+	padding: 8px 14px;
+	border-radius: 999px;
+	background: rgba(27, 36, 64, .86);
+	color: #fff;
+	font-weight: 700;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	pointer-events: none;
+}
+
+.aisleza-world__reticle {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 10px;
+	height: 10px;
+	margin: -5px 0 0 -5px;
+	border: 2px solid rgba(255, 255, 255, .9);
+	border-radius: 50%;
+	box-shadow: 0 0 0 1px rgba(27, 36, 64, .5);
+	pointer-events: none;
+}
+
+.aisleza-world__tip {
+	position: absolute;
+	z-index: 2;
+	display: grid;
+	gap: 2px;
+	max-width: 220px;
+	padding: 8px 12px;
+	border-radius: 10px;
+	background: #fff;
+	box-shadow: 0 10px 24px -12px rgba(0, 0, 0, .5);
+	font-size: 14px;
+	pointer-events: none;
+}
+
+.aisleza-world__tip em {
+	color: var(--aisleza-muted);
+	font-size: 12px;
+	font-style: normal;
+}
+
+.aisleza-world__help {
+	position: absolute;
+	bottom: 16px;
+	inset-inline-start: 50%;
+	transform: translateX(calc(-50% * var(--aisleza-flip)));
+	display: grid;
+	gap: 4px;
+	width: min(420px, calc(100% - 32px));
+	padding: 14px 16px;
+	border-radius: 14px;
+	background: rgba(255, 255, 255, .95);
+	box-shadow: 0 16px 34px -18px rgba(27, 36, 64, .6);
+	font-size: 14px;
+}
+
+.aisleza-world__help.is-dismissed {
+	display: none;
+}
+
+.aisleza .aisleza-world__help-close {
+	justify-self: end;
+	min-height: 40px;
+	margin-top: 4px;
+	padding: 0 16px;
+	border-radius: 999px;
+	background: var(--aisleza-ink);
+	color: #fff;
+	font-weight: 600;
+}
+
+.aisleza-world__map {
+	position: absolute;
+	top: 12px;
+	inset-inline-end: 12px;
+	border-radius: 10px;
+	box-shadow: 0 8px 20px -12px rgba(27, 36, 64, .6);
+	cursor: pointer;
+}
+
+.aisleza-world__stick {
+	position: absolute;
+	bottom: 18px;
+	inset-inline-start: 18px;
+	display: grid;
+	place-items: center;
+	width: 120px;
+	height: 120px;
+	border: 2px solid rgba(255, 255, 255, .8);
+	border-radius: 50%;
+	background: rgba(27, 36, 64, .25);
+	touch-action: none;
+}
+
+.aisleza-world__knob {
+	width: 52px;
+	height: 52px;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, .92);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, .3);
+}
+
+.aisleza-hud-counter {
+	position: absolute;
+	z-index: 3;
+	bottom: 16px;
+	inset-inline-start: 50%;
+	width: min(420px, calc(100% - 32px));
+	transform: translateX(calc(-50% * var(--aisleza-flip)));
+}
+
+/* Products near the shopper, for keyboard and screen-reader users: hidden until focused. */
+.aisleza-worldlist {
+	position: absolute;
+	z-index: 4;
+	top: 56px;
+	inset-inline-start: 12px;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+}
+
+.aisleza-worldlist:focus-within {
+	width: min(340px, calc(100% - 24px));
+	height: auto;
+	max-height: calc(100% - 80px);
+	overflow-y: auto;
+	clip: auto;
+	padding: 12px;
+	border-radius: 14px;
+	background: #fff;
+	box-shadow: 0 16px 34px -18px rgba(27, 36, 64, .6);
+}
+
+.aisleza .aisleza-worldlist__title {
+	margin-bottom: 8px;
+	font-size: 16px;
+	font-weight: 700;
+}
+
+.aisleza .aisleza-worldlist__item {
+	display: block;
+	width: 100%;
+	min-height: 44px;
+	padding: 8px 10px;
+	border-radius: 10px;
+	text-align: start;
+}
+
+.aisleza .aisleza-worldlist__item:hover,
+.aisleza .aisleza-worldlist__item:focus-visible {
+	background: var(--aisleza-canvas);
+}
+
+@media (max-width: 640px) {
+	.aisleza-world__map {
+		transform: scale(.72);
+		transform-origin: top right;
+	}
+
+	[dir="rtl"] .aisleza-world__map {
+		transform-origin: top left;
+	}
+
+	.aisleza-world__where {
+		max-width: calc(100% - 160px);
+		font-size: 13px;
+	}
+
+	.aisleza-world__help {
+		bottom: 150px;
+	}
+
+	/* The joystick sits beside the tool rail, not under it: in a short store the rail reaches the bottom. */
+	.aisleza-world__stick {
+		inset-inline-start: 64px;
+	}
+}
+
+/* ------------------------------------------------------------ List view */
+.aisleza--list .aisleza-room,
+.aisleza--list .aisleza-trolley {
+	display: none;
+}
+
+.aisleza--list .aisleza-scene {
+	background: var(--aisleza-canvas);
+	perspective: none;
+}
+
+.aisleza--list .aisleza-stage {
+	padding: 0 16px 40px;
+}
+
+.aisleza--list .aisleza-sign__plate::before,
+.aisleza--list .aisleza-sign__plate::after {
+	display: none;
+}
+
+.aisleza--list .aisleza-shelving {
+	max-width: 900px;
+	padding: 0;
+	border: 0;
+	background: #fff;
+	border-radius: 14px;
+	box-shadow: none;
+}
+
+.aisleza--list .aisleza-shelf {
+	grid-template-columns: 1fr;
+	grid-auto-rows: auto;
+	background: none;
+}
+
+.aisleza--list .aisleza-item {
+	padding: 0;
+	border-bottom: 1px solid var(--aisleza-line);
+}
+
+.aisleza--list .aisleza-product {
+	flex-direction: row;
+	align-items: center;
+	gap: 14px;
+	min-height: 88px;
+	padding: 10px 14px;
+	text-align: start;
+	border-radius: 0;
+}
+
+.aisleza--list .aisleza-product__display {
+	flex: none;
+	width: 72px;
+	height: 72px;
+	align-items: center;
+	padding: 0;
+}
+
+.aisleza--list .aisleza-product__display::after {
+	display: none;
+}
+
+.aisleza--list .aisleza-product:hover .aisleza-product__display img,
+.aisleza--list .aisleza-product:focus-visible .aisleza-product__display img {
+	transform: none;
+}
+
+.aisleza--list .aisleza-tag {
+	position: static;
+	order: 2;
+	flex: 1;
+	padding: 0;
+	border: 0;
+	background: none;
+	box-shadow: none;
+	font-size: 16px;
+}
+
+.aisleza--list .aisleza-tag__name {
+	-webkit-line-clamp: 2;
+}
+
+.aisleza--list .aisleza-badges {
+	position: static;
+	order: 3;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.aisleza--list .aisleza-stage.is-arriving .aisleza-item {
+	animation: none;
+}
+
+/* ------------------------------------------------------------ Tablet */
+@media (max-width: 1024px) {
+	.aisleza-stage {
+		padding-inline: clamp(12px, 5vw, 8%);
+	}
+
+	.aisleza-room__wall {
+		width: 14%;
+	}
+}
+
+/* ------------------------------------------------------------ Phones */
+@media (max-width: 640px) {
+	.aisleza {
+		--aisleza-row: 236px;
+		font-size: 15px;
+	}
+
+	.aisleza--theme {
+		height: clamp(520px, 86vh, 820px);
+		border-radius: 12px;
+	}
+
+	.aisleza-rail {
+		top: 56px;
+		inset-inline-start: 8px;
+		padding: 4px;
+		border-radius: 14px;
+	}
+
+	.aisleza .aisleza-rail__btn {
+		width: 40px;
+		height: 40px;
+	}
+
+	/* No hover on touch screens: the names stay as accessible names only. */
+	.aisleza .aisleza-rail__label {
+		display: none;
+	}
+
+	.aisleza-room__wall,
+	.aisleza-trolley {
+		display: none;
+	}
+
+	.aisleza-room__ceiling {
+		height: 40px;
+	}
+
+	.aisleza-stage {
+		padding: 0 10px 28px;
+	}
+
+	.aisleza-sign {
+		padding-top: 18px;
+	}
+
+	.aisleza-shelving {
+		padding: 2px 8px 44px;
+		border-width: 7px;
+		border-top-width: 6px;
+	}
+
+	.aisleza-shelf {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.aisleza-item {
+		padding: 50px 5px 22px;
+	}
+
+	.aisleza-tag {
+		font-size: 12px;
+	}
+
+	.aisleza-dialog {
+		align-items: flex-end;
+	}
+
+	.aisleza-dialog__panel,
+	.aisleza-dialog--trolley .aisleza-dialog__panel,
+	.aisleza-dialog--map .aisleza-dialog__panel {
+		width: 100%;
+		height: auto;
+		max-height: 92vh;
+		max-height: 92dvh;
+		padding: 20px 16px calc(20px + env(safe-area-inset-bottom));
+		border-radius: 18px 18px 0 0;
+		transform: translateY(30px);
+	}
+
+	.aisleza-dialog--trolley {
+		justify-content: center;
+	}
+
+	.aisleza-pd {
+		grid-template-columns: 1fr;
+		gap: 16px;
+	}
+
+	.aisleza-pd__stage {
+		aspect-ratio: 4 / 3;
+	}
+
+	.aisleza-pd__actions .aisleza-btn {
+		flex: 1 1 100%;
+	}
+
+	.aisleza-summary {
+		gap: 10px;
+		padding-inline: 12px;
+	}
+
+	.aisleza-summary__text {
+		font-size: 14px;
+	}
+
+	.aisleza .aisleza-summary__checkout {
+		padding: 0 16px;
+	}
+
+	.aisleza-facade__front {
+		grid-template-columns: .8fr 1fr .8fr;
+		gap: 8px;
+		padding: 10px 8px 0;
+		border-inline-width: 6px;
+	}
+
+	.aisleza-window img {
+		width: 80%;
+	}
+
+	.aisleza-window img + img {
+		display: none;
+	}
+}
+
+/* Short screens (phones in landscape): the whole store scrolls; the summary stays reachable. */
+@media (max-height: 520px) {
+	.aisleza-store {
+		overflow-y: auto;
+	}
+
+	.aisleza-scene {
+		flex: none;
+		min-height: 440px;
+	}
+
+	.aisleza-summary {
+		position: sticky;
+		bottom: 0;
+	}
+
+	.aisleza-entrance {
+		grid-template-rows: auto auto;
+	}
+
+	.aisleza-facade__front {
+		height: 150px;
+	}
+}
+
+/* ------------------------------------------------------------ Motion */
+@keyframes aisleza-arrive {
+	from {
+		opacity: .2;
+		transform: translateX(calc(var(--aisleza-dir) * var(--aisleza-flip) * 48px));
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes aisleza-place {
+	from {
+		opacity: 0;
+		transform: translateY(-14px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes aisleza-roll {
+	0% {
+		transform: none;
+	}
+	45% {
+		transform: translateX(calc(var(--aisleza-dir) * var(--aisleza-flip) * 54px)) rotate(calc(var(--aisleza-dir) * -2deg));
+	}
+	100% {
+		transform: none;
+	}
+}
+
+@keyframes aisleza-roll-in {
+	from {
+		opacity: 0;
+		transform: translateX(calc(var(--aisleza-flip) * -180px));
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes aisleza-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes aisleza-bump {
+	30% {
+		transform: translateY(-8px) scale(1.06);
+	}
+	60% {
+		transform: translateY(2px) scale(.98);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.aisleza *,
+	.aisleza *::before,
+	.aisleza *::after,
+	.aisleza-fly {
+		animation: none !important;
+		transition: none !important;
+	}
+}
+
+/* Design preview (an add-on's store designer frames this page): only the 3D store, filling the frame. */
+.aisleza.is-design-preview .aisleza-scene {
+	position: fixed;
+	inset: 0;
+	z-index: 100000;
+	height: auto;
+	margin: 0;
+	border-radius: 0;
+}
+
+.aisleza.is-design-preview .aisleza-world__help {
+	display: none;
+}
+
+/* Store size: filling the browser window, or full screen (store.js setFill / the Fullscreen API). */
+html.aisleza-filled,
+html.aisleza-filled body {
+	overflow: hidden;
+}
+
+.aisleza.is-fill {
+	position: fixed;
+	inset: 0;
+	z-index: var(--aisleza-z);
+	height: auto;
+	margin: 0;
+	border-radius: 0;
+}
+
+body.admin-bar .aisleza.is-fill {
+	top: 32px;
+}
+
+@media (max-width: 782px) {
+	body.admin-bar .aisleza.is-fill {
+		top: 46px;
+	}
+}
+
+.aisleza.is-fullscreen {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	border-radius: 0;
+}
+
+.aisleza.is-fullscreen::backdrop {
+	background: var(--aisleza-canvas);
+}
+
+.aisleza .aisleza-size__fill { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='16' rx='2'/%3E%3Cpath d='M8 9h3M8 9v3M16 15h-3M16 15v-3'/%3E%3C/svg%3E"); }
+.aisleza .aisleza-size__fill[aria-pressed="true"] { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='16' rx='2'/%3E%3Cpath d='M11 12H8M11 12v3M13 12h3M13 12V9'/%3E%3C/svg%3E"); }
+.aisleza .aisleza-size__full { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5'/%3E%3C/svg%3E"); }
+.aisleza .aisleza-size__full[aria-pressed="true"] { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5'/%3E%3C/svg%3E"); }

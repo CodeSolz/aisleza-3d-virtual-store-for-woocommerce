@@ -1,0 +1,18 @@
+/* Aisleza's menu icon: the brand mark, painted in the admin colour scheme's icon colour (it
+   follows hover and the current page like the dashicons around it). */
+#adminmenu #toplevel_page_aisleza div.wp-menu-image::before {
+	content: "";
+	display: block;
+	box-sizing: content-box;
+	width: 20px;
+	height: 20px;
+	margin: 7px auto;
+	padding: 0; /* WordPress pads dashicons by 7px; the mask needs the margin instead. */
+	background-color: currentColor;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='107 94 1040 1040'%3E%3Cpath d='M425 330Q445 300 476 316L572 376Q581 383 577 393L385 919Q381 928 370 928L170 928Q131 925 139 882ZM829 330Q809 300 778 316L682 376Q673 383 677 393L869 919Q873 928 884 928L1084 928Q1123 925 1115 882ZM532 598L722 598Q730 598 732 606L752 700Q754 710 744 710L510 710Q500 710 502 700L522 606Q524 598 532 598Z'/%3E%3C/svg%3E") center / 20px 20px no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='107 94 1040 1040'%3E%3Cpath d='M425 330Q445 300 476 316L572 376Q581 383 577 393L385 919Q381 928 370 928L170 928Q131 925 139 882ZM829 330Q809 300 778 316L682 376Q673 383 677 393L869 919Q873 928 884 928L1084 928Q1123 925 1115 882ZM532 598L722 598Q730 598 732 606L752 700Q754 710 744 710L510 710Q500 710 502 700L522 606Q524 598 532 598Z'/%3E%3C/svg%3E") center / 20px 20px no-repeat;
+}
+
+#adminmenu #toplevel_page_aisleza div.wp-menu-image br {
+	display: none;
+}

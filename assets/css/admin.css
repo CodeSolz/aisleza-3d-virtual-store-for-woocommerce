@@ -1,0 +1,721 @@
+/* Aisleza settings page: the brand's colours on WordPress's own controls. No external fonts or
+   images; add-on cards (.aisleza-admin__card) pick the look up automatically. */
+
+.aisleza-admin {
+	--az-ink: #1b2440;
+	--az-ink-2: #2b3a63;
+	--az-accent: #0e7c66;
+	--az-accent-dark: #0a604f;
+	--az-mint: #37c29d;
+	--az-mint-soft: #e4f4ee;
+	--az-canvas: #f6f3ee;
+	--az-ivory: #faf8f4;
+	--az-line: #e6e0d6;
+	--az-muted: #5b6072;
+	--az-warn: #8a5a12;
+	--az-radius: 14px;
+	--az-shadow: 0 1px 2px rgba(27, 36, 64, .05), 0 10px 28px -16px rgba(27, 36, 64, .22);
+	margin-right: 20px; /* Full width of the screen, like WordPress's own settings screens. */
+	color: var(--az-ink);
+}
+
+body.toplevel_page_aisleza #wpcontent {
+	background: var(--az-canvas, #f6f3ee);
+}
+
+body.toplevel_page_aisleza #wpbody-content {
+	padding-bottom: 40px;
+}
+
+/* Header band */
+.aisleza-hero {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px 24px;
+	margin: 20px 0 20px;
+	padding: 22px 26px;
+	border-radius: var(--az-radius);
+	background:
+		radial-gradient(120% 140% at 100% 0%, rgba(55, 194, 157, .22) 0%, rgba(55, 194, 157, 0) 55%),
+		linear-gradient(135deg, var(--az-ink) 0%, var(--az-ink-2) 100%);
+	color: #fff;
+	box-shadow: var(--az-shadow);
+}
+
+.aisleza-hero__brand {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	min-width: 0;
+}
+
+.aisleza-hero__mark {
+	flex: 0 0 auto;
+	width: 52px;
+	height: 52px;
+	border-radius: 14px;
+	box-shadow: 0 0 0 1px rgba(255, 255, 255, .14), 0 6px 16px rgba(0, 0, 0, .25);
+}
+
+.aisleza-admin .aisleza-hero__name {
+	margin: 0;
+	padding: 0;
+	color: #fff;
+	font-size: 21px;
+	font-weight: 600;
+	line-height: 1.25;
+}
+
+.aisleza-hero__tagline {
+	margin: 4px 0 0;
+	color: rgba(255, 255, 255, .72);
+	font-size: 13px;
+}
+
+.aisleza-hero__side {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+}
+
+.aisleza-hero__facts {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.aisleza-hero__facts li {
+	margin: 0;
+	padding: 5px 12px;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, .1);
+	color: rgba(255, 255, 255, .88);
+	font-size: 12px;
+	line-height: 18px;
+}
+
+.aisleza-state {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	font-weight: 600;
+}
+
+.aisleza-state__dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: #c3c4c7;
+}
+
+.aisleza-state--live .aisleza-state__dot {
+	background: var(--az-mint);
+	box-shadow: 0 0 0 4px rgba(55, 194, 157, .25);
+}
+
+.aisleza-state--draft .aisleza-state__dot,
+.aisleza-state--off .aisleza-state__dot {
+	background: #f0b849;
+}
+
+.aisleza-admin .button.aisleza-hero__open {
+	min-height: 36px;
+	padding: 0 18px;
+	border: 0;
+	border-radius: 10px;
+	background: var(--az-mint);
+	color: var(--az-ink);
+	font-weight: 600;
+	line-height: 36px;
+}
+
+.aisleza-admin .button.aisleza-hero__open:hover,
+.aisleza-admin .button.aisleza-hero__open:focus {
+	background: #5fd3b3;
+	color: var(--az-ink);
+}
+
+/* Layout: section menu + cards */
+.aisleza-layout {
+	display: block;
+}
+
+.aisleza-has-nav .aisleza-layout {
+	display: grid;
+	grid-template-columns: 210px minmax(0, 1fr);
+	gap: 24px;
+	align-items: start;
+}
+
+.aisleza-nav {
+	position: sticky;
+	top: 52px;
+	padding: 10px;
+	border: 1px solid var(--az-line);
+	border-radius: var(--az-radius);
+	background: #fff;
+	box-shadow: var(--az-shadow);
+}
+
+.aisleza-nav ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.aisleza-nav li {
+	margin: 0;
+}
+
+.aisleza-nav li + li {
+	margin-top: 4px;
+}
+
+.aisleza-nav a {
+	display: block;
+	padding: 8px 12px;
+	border-radius: 8px;
+	color: var(--az-muted);
+	font-size: 13px;
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.aisleza-nav a:hover {
+	background: var(--az-ivory);
+	color: var(--az-ink);
+}
+
+.aisleza-nav a[aria-current="true"],
+.aisleza-nav a[aria-current="page"] {
+	background: var(--az-mint-soft);
+	color: var(--az-accent-dark);
+	font-weight: 600;
+}
+
+.aisleza-nav a:focus {
+	outline: 0;
+}
+
+.aisleza-nav a:focus-visible {
+	box-shadow: inset 0 0 0 2px var(--az-accent);
+}
+
+/* Cards */
+.aisleza-admin__card {
+	margin: 0 0 20px;
+	padding: 6px 26px 22px;
+	border: 1px solid var(--az-line);
+	border-radius: var(--az-radius);
+	background: #fff;
+	box-shadow: var(--az-shadow);
+	scroll-margin-top: 48px;
+}
+
+.aisleza-admin__card h2 {
+	margin: 22px 0 6px;
+	color: var(--az-ink);
+	font-size: 17px;
+	font-weight: 600;
+	scroll-margin-top: 48px;
+}
+
+.aisleza-admin__card h2 + .description,
+.aisleza-admin__card h2 + p {
+	margin-top: 0;
+}
+
+.aisleza-admin__card h3 {
+	margin: 26px 0 6px;
+	padding-top: 18px;
+	border-top: 1px solid var(--az-line);
+	color: var(--az-ink);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.aisleza-admin__card form > h2 ~ h2 {
+	margin-top: 30px;
+	padding-top: 22px;
+	border-top: 1px solid var(--az-line);
+}
+
+.aisleza-admin .description {
+	color: var(--az-muted);
+}
+
+.aisleza-admin .form-table th {
+	color: var(--az-ink);
+	font-weight: 600;
+}
+
+.aisleza-admin .form-table td {
+	color: #2c3142;
+}
+
+/* Fields */
+.aisleza-admin input[type="text"],
+.aisleza-admin input[type="number"],
+.aisleza-admin input[type="url"],
+.aisleza-admin select {
+	min-height: 36px;
+	border-color: #cfc8bc;
+	border-radius: 8px;
+}
+
+.aisleza-admin input[type="text"]:focus,
+.aisleza-admin input[type="number"]:focus,
+.aisleza-admin select:focus {
+	border-color: var(--az-accent);
+	box-shadow: 0 0 0 1px var(--az-accent);
+}
+
+.aisleza-admin input[type="color"] {
+	width: 52px;
+	height: 36px;
+	padding: 3px;
+	border: 1px solid #cfc8bc;
+	border-radius: 8px;
+	background: #fff;
+}
+
+/* Single yes/no settings in the forms: switches. */
+.aisleza-admin .form-table td > label > input[type="checkbox"],
+.aisleza-admin .form-table th > label > input[type="checkbox"] {
+	-webkit-appearance: none;
+	appearance: none;
+	position: relative;
+	width: 36px;
+	height: 20px;
+	margin: 0 8px 0 0;
+	border: 0;
+	border-radius: 999px;
+	background: #c9c3b8;
+	box-shadow: none;
+	vertical-align: -5px;
+	cursor: pointer;
+	transition: background .15s ease;
+}
+
+.aisleza-admin .form-table td > label > input[type="checkbox"]::before,
+.aisleza-admin .form-table th > label > input[type="checkbox"]::before {
+	content: "";
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 16px;
+	height: 16px;
+	margin: 0;
+	border-radius: 50%;
+	background: #fff;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, .25);
+	transition: transform .15s ease;
+}
+
+.aisleza-admin .form-table td > label > input[type="checkbox"]:checked,
+.aisleza-admin .form-table th > label > input[type="checkbox"]:checked {
+	background: var(--az-accent);
+}
+
+.aisleza-admin .form-table td > label > input[type="checkbox"]:checked::before,
+.aisleza-admin .form-table th > label > input[type="checkbox"]:checked::before {
+	transform: translateX(16px);
+}
+
+.aisleza-admin .form-table td > label > input[type="checkbox"]:focus,
+.aisleza-admin .form-table th > label > input[type="checkbox"]:focus {
+	box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--az-accent);
+	outline: 0;
+}
+
+/* Choices: each option a tile. */
+.aisleza-admin .form-table fieldset {
+	display: grid;
+	gap: 8px;
+	max-width: 760px;
+}
+
+.aisleza-admin .form-table fieldset br {
+	display: none;
+}
+
+.aisleza-admin .form-table fieldset > label {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	margin: 0;
+	padding: 11px 14px;
+	border: 1px solid var(--az-line);
+	border-radius: 10px;
+	background: var(--az-ivory);
+	line-height: 1.45;
+	cursor: pointer;
+}
+
+.aisleza-admin .form-table fieldset > label input {
+	margin-top: 2px;
+}
+
+.aisleza-admin .form-table fieldset > label:has(input:checked) {
+	border-color: var(--az-accent);
+	background: var(--az-mint-soft);
+	box-shadow: 0 0 0 1px var(--az-accent);
+}
+
+/* WordPress draws a checked radio as a filled circle with a white dot. */
+.aisleza-admin input[type="radio"]:checked {
+	border-color: var(--az-accent);
+	background-color: var(--az-accent);
+}
+
+.aisleza-admin input[type="radio"]:checked::before {
+	background-color: #fff;
+}
+
+.aisleza-admin input[type="radio"]:focus,
+.aisleza-admin .aisleza-sections input[type="checkbox"]:focus {
+	border-color: var(--az-accent);
+	box-shadow: 0 0 0 1px var(--az-accent);
+}
+
+/* Buttons */
+.aisleza-admin .button-primary {
+	min-height: 38px;
+	padding: 0 20px;
+	border-color: var(--az-accent);
+	border-radius: 10px;
+	background: var(--az-accent);
+	font-weight: 600;
+	line-height: 36px;
+}
+
+.aisleza-admin .button-primary:hover,
+.aisleza-admin .button-primary:focus {
+	border-color: var(--az-accent-dark);
+	background: var(--az-accent-dark);
+}
+
+.aisleza-admin .button-primary:focus {
+	box-shadow: 0 0 0 1px #fff, 0 0 0 3px var(--az-accent);
+}
+
+.aisleza-admin .button:not(.button-primary):not(.button-link):not(.aisleza-hero__open) {
+	min-height: 34px;
+	border-color: #cfc8bc;
+	border-radius: 9px;
+	color: var(--az-ink);
+	line-height: 32px;
+}
+
+.aisleza-admin .button:not(.button-primary):not(.button-link):not(.aisleza-hero__open):hover {
+	border-color: var(--az-accent);
+	color: var(--az-accent-dark);
+}
+
+.aisleza-admin__actions,
+.aisleza-admin__card form > p:last-child {
+	position: sticky; /* Each card's Save stays in view while working in a long card. */
+	bottom: 0;
+	z-index: 5;
+	margin: 22px -26px -22px;
+	padding: 16px 26px;
+	border-top: 1px solid var(--az-line);
+	border-radius: 0 0 var(--az-radius) var(--az-radius);
+	background: var(--az-ivory);
+	box-shadow: 0 -8px 16px -12px rgba(27, 36, 64, .25);
+}
+
+.aisleza-admin__card form.is-dirty > p:last-child {
+	background: #fff8e5;
+}
+
+.aisleza-admin__unsaved {
+	margin-inline-start: 12px;
+	color: var(--az-warn);
+	font-weight: 600;
+}
+
+/* Notices */
+.aisleza-admin .notice.inline {
+	margin: 12px 0;
+	border-radius: 10px;
+	box-shadow: none;
+}
+
+.aisleza-admin-notice {
+	margin: 0 0 20px;
+}
+
+/* Setup progress */
+.aisleza-setup__head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.aisleza-setup__count {
+	color: var(--az-muted);
+	font-size: 13px;
+	font-weight: 500;
+}
+
+.aisleza-setup__bar {
+	height: 6px;
+	margin: 10px 0 16px;
+	overflow: hidden;
+	border-radius: 999px;
+	background: #eee9e0;
+}
+
+.aisleza-setup__bar span {
+	display: block;
+	height: 100%;
+	border-radius: inherit;
+	background: linear-gradient(90deg, var(--az-accent), var(--az-mint));
+}
+
+.aisleza-steps {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+	gap: 10px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.aisleza-steps li {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0;
+	padding: 10px 12px;
+	border: 1px solid var(--az-line);
+	border-radius: 10px;
+	background: var(--az-ivory);
+	font-size: 13px;
+	line-height: 1.35;
+}
+
+.aisleza-steps__mark {
+	display: inline-grid;
+	flex: 0 0 auto;
+	place-items: center;
+	width: 26px;
+	height: 26px;
+	border-radius: 50%;
+	background: #ece6dc;
+	color: var(--az-ink);
+	font-size: 12px;
+	font-weight: 700;
+}
+
+.aisleza-steps .is-done {
+	background: #fff;
+}
+
+.aisleza-steps .is-done .aisleza-steps__mark {
+	background: var(--az-accent);
+	color: #fff;
+}
+
+.aisleza-steps a {
+	color: var(--az-ink);
+	text-decoration: none;
+}
+
+.aisleza-steps .is-done a {
+	color: var(--az-muted);
+}
+
+.aisleza-steps a:hover {
+	color: var(--az-accent-dark);
+	text-decoration: underline;
+}
+
+/* Store page card */
+.aisleza-admin-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+}
+
+.aisleza-admin-warn {
+	color: var(--az-warn);
+}
+
+.aisleza-admin-create {
+	margin: 0 0 8px;
+}
+
+.aisleza-admin code {
+	padding: 2px 6px;
+	border-radius: 5px;
+	background: #f1ede6;
+	color: var(--az-ink);
+}
+
+/* Aisles table */
+.aisleza-admin .widefat {
+	overflow: hidden;
+	border: 1px solid var(--az-line);
+	border-radius: 10px;
+	box-shadow: none;
+}
+
+.aisleza-admin .widefat thead th {
+	border-bottom: 1px solid var(--az-line);
+	background: var(--az-ivory);
+	color: var(--az-muted);
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: .02em;
+	text-transform: uppercase;
+}
+
+.aisleza-admin .widefat.striped > tbody > :nth-child(odd) {
+	background: #fcfbf8;
+}
+
+.aisleza-sections {
+	max-width: 1100px;
+	margin: 12px 0 16px;
+}
+
+.aisleza-sections td,
+.aisleza-sections th {
+	vertical-align: middle;
+}
+
+.aisleza-sections__child td:nth-child(2) {
+	padding-inline-start: 24px;
+}
+
+.aisleza-sections__count {
+	display: block;
+	color: var(--az-muted);
+	font-size: 12px;
+}
+
+.aisleza-sections__missing td {
+	color: #b32d2e;
+}
+
+.aisleza-sections .regular-text {
+	width: 100%;
+	max-width: 240px;
+}
+
+.aisleza-hex {
+	width: 8em;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* Integrations */
+.aisleza-integration {
+	margin: 14px 0 0;
+	padding: 14px 18px;
+	border: 1px solid var(--az-line);
+	border-inline-start: 4px solid #c3c4c7;
+	border-radius: 10px;
+	background: var(--az-ivory);
+}
+
+.aisleza-integration h3 {
+	margin: 2px 0 8px;
+	padding: 0;
+	border: 0;
+}
+
+.aisleza-integration--ready {
+	border-inline-start-color: var(--az-accent);
+}
+
+.aisleza-integration--unconfigured,
+.aisleza-integration--incompatible {
+	border-inline-start-color: #dba617;
+}
+
+@media (max-width: 960px) {
+	.aisleza-has-nav .aisleza-layout {
+		display: block;
+	}
+
+	.aisleza-nav {
+		display: none;
+	}
+}
+
+@media (max-width: 782px) {
+	.aisleza-admin {
+		margin-right: 10px;
+	}
+
+	.aisleza-hero {
+		padding: 18px;
+	}
+
+	.aisleza-admin__card {
+		padding: 4px 16px 16px;
+	}
+
+	.aisleza-admin__actions,
+	.aisleza-admin__card form > p:last-child {
+		margin: 18px -16px -16px;
+		padding: 14px 16px;
+	}
+
+	.aisleza-admin .form-table td > label > input[type="checkbox"],
+	.aisleza-admin .form-table th > label > input[type="checkbox"] {
+		width: 44px;
+		height: 24px;
+	}
+
+	.aisleza-admin .form-table td > label > input[type="checkbox"]::before,
+	.aisleza-admin .form-table th > label > input[type="checkbox"]::before {
+		width: 20px;
+		height: 20px;
+	}
+
+	.aisleza-admin .form-table td > label > input[type="checkbox"]:checked::before,
+	.aisleza-admin .form-table th > label > input[type="checkbox"]:checked::before {
+		transform: translateX(20px);
+	}
+
+	.aisleza-sections thead {
+		display: none;
+	}
+
+	.aisleza-sections tr {
+		display: grid;
+		grid-template-columns: 32px 1fr;
+		gap: 4px 8px;
+		padding: 8px 0;
+	}
+
+	.aisleza-sections td {
+		display: block;
+		padding: 2px 8px;
+	}
+
+	.aisleza-sections td:nth-child(n+3) {
+		grid-column: 2;
+	}
+}
+
+/* Tabbed pages: one part at a time (admin.js); without the script every part shows. */
+.aisleza-admin .is-tab-hidden {
+	display: none !important;
+}
+
+.aisleza-tabbed .aisleza-tab > h2:first-child,
+.aisleza-tabbed .aisleza-admin__card > .aisleza-tab:first-child > h2:first-child {
+	margin-top: 0;
+}

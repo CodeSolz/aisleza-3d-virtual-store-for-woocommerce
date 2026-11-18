@@ -1,0 +1,1078 @@
+# Copyright (C) 2026 CodeSolz
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Aisleza — 3D Virtual Store for WooCommerce 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/aisleza\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-11-13T11:32:48+01:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"X-Domain: aisleza-3d-virtual-store-for-woocommerce\n"
+
+#. Plugin Name of the plugin
+#: aisleza.php
+#: includes/Brand.php:27
+msgid "Aisleza — 3D Virtual Store for WooCommerce"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: aisleza.php
+msgid "https://aisleza.com/"
+msgstr ""
+
+#. Description of the plugin
+#: aisleza.php
+msgid "Turn your online shop into a place to explore. Customers walk 3D aisles built from your categories, pick products off the shelves into a real trolley and pay at your normal WooCommerce checkout."
+msgstr ""
+
+#. Author of the plugin
+#: aisleza.php
+msgid "CodeSolz"
+msgstr ""
+
+#. Author URI of the plugin
+#: aisleza.php
+msgid "https://codesolz.net"
+msgstr ""
+
+#. translators: 1: required PHP version, 2: current PHP version
+#: aisleza.php:45
+msgid "Aisleza requires PHP %1$s or higher. Your site is running PHP %2$s."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:115
+#: includes/Admin/SettingsPage.php:235
+msgid "Settings"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:284
+msgid "Unsaved changes"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:293
+#: includes/Admin/SettingsPage.php:429
+#: includes/Admin/SettingsPage.php:508
+msgid "Store page"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:297
+msgid "Integrations"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:332
+msgid "Not set up yet"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:334
+msgid "Draft: only you can preview it"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:336
+msgid "Switched off"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:338
+msgid "Open to shoppers"
+msgstr ""
+
+#. translators: %d: number of aisles
+#: includes/Admin/SettingsPage.php:355
+msgid "%d aisle"
+msgid_plural "%d aisles"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Admin/SettingsPage.php:361
+#: includes/Admin/SettingsPage.php:442
+msgid "Open store"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:361
+#: includes/Admin/SettingsPage.php:442
+msgid "Preview store"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:377
+msgid "Create or choose the store page"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:378
+msgid "Pick the categories that become aisles, in order"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:379
+msgid "Set the store name, accent and layout"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:380
+msgid "Preview, then open the store to shoppers"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:381
+msgid "Optional: connect integrations"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:385
+msgid "Get started"
+msgstr ""
+
+#. translators: 1: steps done, 2: all steps
+#: includes/Admin/SettingsPage.php:387
+msgid "%1$d of %2$d done"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:388
+msgid "Setup progress"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:397
+msgid "(done)"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:397
+msgid "(to do)"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:410
+msgid "A draft store page was created and selected. Preview it, then publish it when you are ready."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:411
+msgid "A store page is already selected, so no new page was created."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:412
+msgid "The store page could not be created. Please try again."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:413
+msgid "Virtual store settings saved."
+msgstr ""
+
+#. translators: 1: page title, 2: status such as Published or Draft
+#: includes/Admin/SettingsPage.php:435
+msgid "Shoppers enter the store on “%1$s” (%2$s)."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:443
+msgid "Edit page"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:443
+msgid "Edit and publish page"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:444
+#: includes/Frontend/Strings.php:42
+msgid "Regular shop"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:447
+msgid "The store is switched off, so shoppers see a short “closed” message with a link to your shop. You can still preview it while logged in."
+msgstr ""
+
+#. translators: %s: shortcode
+#: includes/Admin/SettingsPage.php:455
+msgid "This page does not contain %s yet. Add it to the page, or choose the “Full window” layout, which shows the store whatever the page contains."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:464
+msgid "No store page yet. Create one here (it starts as a draft you publish yourself), or put the shortcode on any page and select that page below."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:468
+msgid "Create virtual store page"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:500
+#: includes/Admin/SettingsPage.php:501
+msgid "Store"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:504
+msgid "Virtual store"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:505
+msgid "Open the virtual store to shoppers"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:511
+msgid "— Choose a page —"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:521
+msgid "Layout"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:524
+msgid "Full window (recommended): the store page shows only the store, with a link back to your shop"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:525
+msgid "Inside my theme: the store sits in the page content with your header and footer"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:530
+msgid "Store size"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:533
+msgid "Open in its place on the page"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:534
+msgid "Fill the browser window when shoppers walk in"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:536
+msgid "Shoppers can always switch with the buttons at the top of the store: fill the window, or full screen on devices that allow it. With the Full window layout the store already fills the window."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:540
+msgid "Store view"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:543
+msgid "Walk-in 3D store (recommended): shoppers walk the aisles with the keyboard, mouse or an on-screen joystick"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:544
+msgid "Shelf wall: one aisle at a time on a flat shelf (lighter, for older devices)"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:546
+msgid "Browsers without 3D support always get the shelf wall, and every shopper can switch to a plain list."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:550
+msgid "Store name"
+msgstr ""
+
+#. translators: %s: category
+#: includes/Admin/SettingsPage.php:554
+#: includes/Admin/SettingsPage.php:605
+msgid "Brand accent"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:557
+msgid "Used for the shop front, signs and buttons. Text and fonts follow your site."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:563
+#: includes/Admin/SettingsPage.php:564
+#: includes/Admin/SettingsPage.php:631
+#: includes/Frontend/Strings.php:44
+msgid "Aisles"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:565
+msgid "Each ticked category becomes an aisle, in the order of the position numbers. Sub-categories of an aisle appear as filters inside it. Products stay in their real categories, so a product in two ticked categories is on both aisles."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:569
+msgid "Aisle"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:570
+msgid "Category"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:571
+msgid "Position"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:572
+msgid "Sign label"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:573
+msgid "Sign colour"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:574
+msgid "Category image on sign"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:579
+msgid "No product categories yet. Add categories under Products → Categories."
+msgstr ""
+
+#. translators: %d: number of products
+#: includes/Admin/SettingsPage.php:599
+msgid "%d product"
+msgid_plural "%d products"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: category
+#: includes/Admin/SettingsPage.php:603
+msgid "Position of %s"
+msgstr ""
+
+#. translators: %s: category
+#: includes/Admin/SettingsPage.php:604
+msgid "Sign label for %s"
+msgstr ""
+
+#. translators: %s: category
+#: includes/Admin/SettingsPage.php:605
+msgid "Sign colour for %s, like #1b2440"
+msgstr ""
+
+#. translators: %s: category
+#: includes/Admin/SettingsPage.php:606
+msgid "Show the image of %s on its sign"
+msgstr ""
+
+#. translators: %d: category id
+#: includes/Admin/SettingsPage.php:614
+msgid "Category #%d no longer exists, so its aisle is hidden. Save to remove it from the list."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:624
+msgid "Products per shelf"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:627
+msgid "Shoppers see this many products at a time and move to the next shelf for more. Only the shelf being viewed is loaded."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:633
+msgid "Show sub-categories as filters inside an aisle"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:634
+msgid "Show aisles that have no products"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:638
+msgid "Ways in"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:641
+msgid "Only links I add myself"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:642
+msgid "Also show an “Enter the virtual store” banner above the shop and category grids"
+msgstr ""
+
+#. translators: %s: shortcode
+#: includes/Admin/SettingsPage.php:649
+msgid "Menus are never changed. Add the store page to a menu yourself, or place %s on any page or widget."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:660
+msgid "Save changes"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:670
+msgid "Integrations (optional)"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:671
+msgid "Your virtual store works fully without any integration."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:677
+msgid "Let shoppers preview supported wearable products on their own photos. Optional: your virtual store works fully without WearGraph."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:704
+msgid "Not installed"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:705
+msgid "Inactive"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:706
+msgid "Needs an update"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:707
+msgid "Needs setup"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:708
+msgid "Active"
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:719
+msgid "You are not allowed to change the virtual store settings."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:797
+msgid "You are not allowed to create the store page."
+msgstr ""
+
+#: includes/Admin/SettingsPage.php:811
+msgid "Virtual Store"
+msgstr ""
+
+#: includes/Brand.php:64
+msgid "Turn your online shop into a place to explore."
+msgstr ""
+
+#: includes/Frontend/EntryLink.php:56
+msgid "Enter our virtual store"
+msgstr ""
+
+#. translators: %s: store name
+#: includes/Frontend/EntryLink.php:74
+msgid "Prefer to browse aisle by aisle? Walk through %s with a trolley."
+msgstr ""
+
+#: includes/Frontend/EntryLink.php:79
+msgid "Enter the virtual store"
+msgstr ""
+
+#: includes/Frontend/Shortcode.php:126
+#: includes/Plugin.php:102
+msgid "Our virtual store is closed right now."
+msgstr ""
+
+#: includes/Frontend/Shortcode.php:128
+#: includes/Frontend/Shortcode.php:155
+#: includes/Plugin.php:104
+msgid "Visit the shop"
+msgstr ""
+
+#: includes/Frontend/Shortcode.php:151
+msgid "Opening the store…"
+msgstr ""
+
+#: includes/Frontend/Shortcode.php:152
+msgid "Shop the regular way instead"
+msgstr ""
+
+#: includes/Frontend/Shortcode.php:155
+msgid "The virtual store needs JavaScript."
+msgstr ""
+
+#: includes/Frontend/Strings.php:25
+msgid "Walk the aisles, pick what you like and pay at our normal checkout."
+msgstr ""
+
+#: includes/Frontend/Strings.php:26
+msgid "Enter store"
+msgstr ""
+
+#: includes/Frontend/Strings.php:27
+msgid "Grab a trolley — it follows you round the store."
+msgstr ""
+
+#: includes/Frontend/Strings.php:28
+msgid "Take a trolley"
+msgstr ""
+
+#: includes/Frontend/Strings.php:29
+msgid "Take your trolley"
+msgstr ""
+
+#. translators: %s: like "3 items", already in the cart
+#: includes/Frontend/Strings.php:31
+msgid "Welcome back! Your trolley still holds %s."
+msgstr ""
+
+#: includes/Frontend/Strings.php:32
+msgid "The virtual store is already open further up this page."
+msgstr ""
+
+#: includes/Frontend/Strings.php:33
+msgid "Preview: the virtual store is switched off for shoppers."
+msgstr ""
+
+#: includes/Frontend/Strings.php:36
+msgid "Search the store"
+msgstr ""
+
+#: includes/Frontend/Strings.php:37
+msgid "Search products"
+msgstr ""
+
+#: includes/Frontend/Strings.php:38
+msgid "Store map"
+msgstr ""
+
+#: includes/Frontend/Strings.php:39
+msgid "List view"
+msgstr ""
+
+#: includes/Frontend/Strings.php:40
+msgid "List view on: products show as a simple list."
+msgstr ""
+
+#: includes/Frontend/Strings.php:41
+msgid "List view off: products show on shelves."
+msgstr ""
+
+#: includes/Frontend/Strings.php:43
+msgid "Store tools"
+msgstr ""
+
+#: includes/Frontend/Strings.php:45
+msgid "Fill the window"
+msgstr ""
+
+#: includes/Frontend/Strings.php:46
+msgid "Back to the page"
+msgstr ""
+
+#: includes/Frontend/Strings.php:47
+msgid "Full screen"
+msgstr ""
+
+#: includes/Frontend/Strings.php:48
+msgid "Exit full screen"
+msgstr ""
+
+#: includes/Frontend/Strings.php:49
+msgid "Store sections"
+msgstr ""
+
+#: includes/Frontend/Strings.php:50
+msgid "Checkout counter"
+msgstr ""
+
+#. translators: %s: section name
+#: includes/Frontend/Strings.php:52
+msgid "Now in %s."
+msgstr ""
+
+#. translators: %s: search words
+#: includes/Frontend/Strings.php:54
+msgid "Search: “%s”"
+msgstr ""
+
+#: includes/Frontend/Strings.php:55
+msgid "Filter this aisle"
+msgstr ""
+
+#: includes/Frontend/Strings.php:56
+msgid "All"
+msgstr ""
+
+#: includes/Frontend/Strings.php:57
+msgid "This store has no aisles yet."
+msgstr ""
+
+#. translators: %d: number of products
+#: includes/Frontend/Strings.php:59
+msgid "%d products"
+msgstr ""
+
+#: includes/Frontend/Strings.php:60
+msgid "1 product"
+msgstr ""
+
+#: includes/Frontend/Strings.php:61
+msgid "Pay for your trolley"
+msgstr ""
+
+#: includes/Frontend/Strings.php:64
+msgid "Previous shelf"
+msgstr ""
+
+#: includes/Frontend/Strings.php:65
+msgid "Next shelf"
+msgstr ""
+
+#. translators: 1: shelf number, 2: number of shelves
+#: includes/Frontend/Strings.php:67
+msgid "Shelf %1$d of %2$d"
+msgstr ""
+
+#. translators: 1: section name, 2: shelf number, 3: number of shelves
+#: includes/Frontend/Strings.php:69
+msgid "%1$s, shelf %2$d of %3$d"
+msgstr ""
+
+#: includes/Frontend/Strings.php:70
+msgid "Loading the shelf…"
+msgstr ""
+
+#: includes/Frontend/Strings.php:71
+msgid "This shelf could not be loaded. Check your connection and try again."
+msgstr ""
+
+#: includes/Frontend/Strings.php:72
+msgid "This aisle is empty right now."
+msgstr ""
+
+#. translators: %s: search words
+#: includes/Frontend/Strings.php:74
+msgid "Nothing found for “%s”. Try other words or pick an aisle."
+msgstr ""
+
+#. translators: 1: number of products found, 2: search words
+#: includes/Frontend/Strings.php:76
+msgid "%1$d products found for “%2$s”."
+msgstr ""
+
+#: includes/Frontend/Strings.php:77
+msgid "Try again"
+msgstr ""
+
+#: includes/Frontend/Strings.php:78
+msgid "Sale"
+msgstr ""
+
+#: includes/Frontend/Strings.php:79
+msgid "Out of stock"
+msgstr ""
+
+#: includes/Frontend/Strings.php:80
+msgid "In stock"
+msgstr ""
+
+#: includes/Frontend/Strings.php:81
+msgid "Try on"
+msgstr ""
+
+#: includes/Frontend/Strings.php:82
+msgid "Was"
+msgstr ""
+
+#: includes/Frontend/Strings.php:83
+msgid "now"
+msgstr ""
+
+#: includes/Frontend/Strings.php:84
+msgid "See product"
+msgstr ""
+
+#: includes/Frontend/Strings.php:87
+msgid "Close"
+msgstr ""
+
+#: includes/Frontend/Strings.php:88
+msgid "Product images"
+msgstr ""
+
+#. translators: 1: image number, 2: number of images
+#: includes/Frontend/Strings.php:90
+msgid "Show image %1$d of %2$d"
+msgstr ""
+
+#: includes/Frontend/Strings.php:91
+msgid "No image available"
+msgstr ""
+
+#. translators: %s: attribute name, like Size
+#: includes/Frontend/Strings.php:93
+msgid "Choose %s"
+msgstr ""
+
+#: includes/Frontend/Strings.php:94
+msgid "unavailable"
+msgstr ""
+
+#: includes/Frontend/Strings.php:95
+msgid "Choose your options to add this to your trolley."
+msgstr ""
+
+#: includes/Frontend/Strings.php:96
+msgid "That combination is not available. Please choose different options."
+msgstr ""
+
+#: includes/Frontend/Strings.php:97
+msgid "Checking this option…"
+msgstr ""
+
+#: includes/Frontend/Strings.php:98
+msgid "The details for this option could not be loaded."
+msgstr ""
+
+#: includes/Frontend/Strings.php:99
+msgid "This product cannot be bought online."
+msgstr ""
+
+#: includes/Frontend/Strings.php:100
+msgid "This product is set up on its own page."
+msgstr ""
+
+#: includes/Frontend/Strings.php:101
+msgid "Configure product"
+msgstr ""
+
+#: includes/Frontend/Strings.php:102
+msgid "View product"
+msgstr ""
+
+#: includes/Frontend/Strings.php:103
+msgid "Open the full product page"
+msgstr ""
+
+#: includes/Frontend/Strings.php:104
+msgid "Quantity"
+msgstr ""
+
+#: includes/Frontend/Strings.php:105
+msgid "One fewer"
+msgstr ""
+
+#: includes/Frontend/Strings.php:106
+msgid "One more"
+msgstr ""
+
+#: includes/Frontend/Strings.php:107
+msgid "Limited to one per order."
+msgstr ""
+
+#: includes/Frontend/Strings.php:108
+msgid "Add to trolley"
+msgstr ""
+
+#: includes/Frontend/Strings.php:109
+msgid "Adding…"
+msgstr ""
+
+#. translators: 1: quantity, 2: product name
+#: includes/Frontend/Strings.php:111
+msgid "Added %1$d × %2$s to your trolley."
+msgstr ""
+
+#: includes/Frontend/Strings.php:112
+msgid "The connection dropped and the item was not added. Please try again."
+msgstr ""
+
+#: includes/Frontend/Strings.php:113
+msgid "We could not confirm whether the item was added. Please check your trolley before trying again."
+msgstr ""
+
+#: includes/Frontend/Strings.php:114
+msgid "Check my trolley"
+msgstr ""
+
+#: includes/Frontend/Strings.php:115
+msgid "View trolley"
+msgstr ""
+
+#: includes/Frontend/Strings.php:116
+msgid "Keep shopping"
+msgstr ""
+
+#: includes/Frontend/Strings.php:117
+msgid "Network problem. Please check your connection and try again."
+msgstr ""
+
+#: includes/Frontend/Strings.php:120
+msgid "Try on me"
+msgstr ""
+
+#: includes/Frontend/Strings.php:121
+msgid "Opens our fitting room. It shows how this item could look on you; it cannot check size or fit."
+msgstr ""
+
+#: includes/Frontend/Strings.php:122
+msgid "Opening the fitting room…"
+msgstr ""
+
+#: includes/Frontend/Strings.php:123
+msgid "Try-on is not available right now. You can keep shopping as normal."
+msgstr ""
+
+#: includes/Frontend/Strings.php:124
+msgid "The fitting room could not open. You can keep shopping and try again later."
+msgstr ""
+
+#: includes/Frontend/Strings.php:125
+msgid "This option cannot be tried on yet. Choose another option, or add it to your trolley."
+msgstr ""
+
+#: includes/Frontend/Strings.php:126
+msgid "You tried on a different option. Seeing this one needs a new try-on."
+msgstr ""
+
+#: includes/Frontend/Strings.php:127
+msgid "Your choice now matches the option you last tried on."
+msgstr ""
+
+#: includes/Frontend/Strings.php:128
+msgid "Back in the store. Your trolley is unchanged unless you added something in the fitting room."
+msgstr ""
+
+#: includes/Frontend/Strings.php:131
+msgid "Trolley"
+msgstr ""
+
+#: includes/Frontend/Strings.php:132
+msgid "Your trolley"
+msgstr ""
+
+#: includes/Frontend/Strings.php:133
+msgid "Trolley summary"
+msgstr ""
+
+#. translators: %s: like "3 items"
+#: includes/Frontend/Strings.php:135
+msgid "Open trolley, %s"
+msgstr ""
+
+#. translators: %d: number of items
+#: includes/Frontend/Strings.php:137
+msgid "%d items"
+msgstr ""
+
+#: includes/Frontend/Strings.php:138
+msgid "1 item"
+msgstr ""
+
+#. translators: %s: amount
+#: includes/Frontend/Strings.php:140
+msgid "Subtotal %s"
+msgstr ""
+
+#: includes/Frontend/Strings.php:141
+msgid "Subtotal"
+msgstr ""
+
+#: includes/Frontend/Strings.php:142
+msgid "Discount"
+msgstr ""
+
+#: includes/Frontend/Strings.php:143
+msgid "Shipping and taxes are calculated at checkout."
+msgstr ""
+
+#: includes/Frontend/Strings.php:144
+msgid "Includes tax. Shipping is calculated at checkout."
+msgstr ""
+
+#: includes/Frontend/Strings.php:145
+msgid "Fetching your trolley…"
+msgstr ""
+
+#: includes/Frontend/Strings.php:146
+msgid "Your trolley could not be loaded right now."
+msgstr ""
+
+#: includes/Frontend/Strings.php:147
+msgid "Your trolley is empty. Pick an aisle to start shopping."
+msgstr ""
+
+#: includes/Frontend/Strings.php:148
+#: includes/Frontend/Strings.php:196
+msgid "Checkout"
+msgstr ""
+
+#: includes/Frontend/Strings.php:149
+msgid "View cart"
+msgstr ""
+
+#: includes/Frontend/Strings.php:150
+msgid "Remove"
+msgstr ""
+
+#. translators: %s: product name
+#: includes/Frontend/Strings.php:152
+msgid "Remove %s from the trolley"
+msgstr ""
+
+#. translators: %s: product name
+#: includes/Frontend/Strings.php:154
+msgid "One fewer %s"
+msgstr ""
+
+#. translators: %s: product name
+#: includes/Frontend/Strings.php:156
+msgid "One more %s"
+msgstr ""
+
+#. translators: %s: product name
+#: includes/Frontend/Strings.php:158
+msgid "Quantity of %s"
+msgstr ""
+
+#. translators: %d: quantity
+#: includes/Frontend/Strings.php:160
+msgid "Qty %d"
+msgstr ""
+
+#. translators: 1: product name, 2: new quantity
+#: includes/Frontend/Strings.php:162
+msgid "%1$s: quantity is now %2$d."
+msgstr ""
+
+#. translators: %s: product name
+#: includes/Frontend/Strings.php:164
+msgid "%s was removed from your trolley."
+msgstr ""
+
+#: includes/Frontend/Strings.php:165
+msgid "Saving your trolley, then on to checkout…"
+msgstr ""
+
+#: includes/Frontend/Strings.php:168
+msgid "Walk-in store"
+msgstr ""
+
+#: includes/Frontend/Strings.php:169
+msgid "The store. Walk with the arrow keys or W, A, S, D, look around by dragging, and press Enter on the product in front of you. The products of this aisle are listed after it."
+msgstr ""
+
+#: includes/Frontend/Strings.php:171
+msgid "Walk: W A S D or the arrow keys (hold Shift to hurry)"
+msgstr ""
+
+#: includes/Frontend/Strings.php:172
+msgid "Look around: drag with the mouse"
+msgstr ""
+
+#: includes/Frontend/Strings.php:173
+msgid "Products: click one, or face it and press Enter"
+msgstr ""
+
+#: includes/Frontend/Strings.php:174
+#: includes/Frontend/Strings.php:180
+msgid "Go straight to an aisle: the aisle buttons or the map"
+msgstr ""
+
+#: includes/Frontend/Strings.php:177
+msgid "Walk: use the joystick"
+msgstr ""
+
+#: includes/Frontend/Strings.php:178
+msgid "Look around: drag the view"
+msgstr ""
+
+#: includes/Frontend/Strings.php:179
+msgid "Products: tap one"
+msgstr ""
+
+#: includes/Frontend/Strings.php:182
+msgid "Got it"
+msgstr ""
+
+#: includes/Frontend/Strings.php:183
+msgid "Store map: click to walk there"
+msgstr ""
+
+#: includes/Frontend/Strings.php:184
+msgid "Click to view"
+msgstr ""
+
+#: includes/Frontend/Strings.php:185
+msgid "Store entrance"
+msgstr ""
+
+#. translators: 1: aisle number, 2: section name
+#: includes/Frontend/Strings.php:187
+msgid "Aisle %1$d · %2$s"
+msgstr ""
+
+#: includes/Frontend/Strings.php:188
+msgid "Nothing in front of you. Walk up to a shelf, or use the product list after the store view."
+msgstr ""
+
+#: includes/Frontend/Strings.php:189
+msgid "Products near you"
+msgstr ""
+
+#: includes/Frontend/Strings.php:190
+msgid "Featured in the store"
+msgstr ""
+
+#. translators: %s: section name
+#: includes/Frontend/Strings.php:192
+msgid "Products in %s"
+msgstr ""
+
+#: includes/Frontend/Strings.php:193
+msgid "Walk into an aisle to list its products here."
+msgstr ""
+
+#: includes/Frontend/Strings.php:197
+msgid "Nothing to pay for yet. Your trolley is empty."
+msgstr ""
+
+#: includes/Frontend/Strings.php:198
+msgid "Back to the aisles"
+msgstr ""
+
+#: includes/Frontend/Strings.php:199
+msgid "Pay at checkout"
+msgstr ""
+
+#: includes/Frontend/Strings.php:200
+msgid "Review trolley"
+msgstr ""
+
+#: includes/Integrations/WearGraph.php:73
+msgid "WearGraph — AI Virtual Try-On"
+msgstr ""
+
+#: includes/Integrations/WearGraph.php:82
+msgid "WearGraph is installed but not active. Activate it if you want try-on in the store."
+msgstr ""
+
+#: includes/Integrations/WearGraph.php:83
+msgid "Not installed. This is optional; your virtual store works fully without it."
+msgstr ""
+
+#: includes/Integrations/WearGraph.php:86
+#: includes/Integrations/WearGraph.php:96
+msgid "Go to Plugins"
+msgstr ""
+
+#. translators: %s: version
+#: includes/Integrations/WearGraph.php:92
+msgid "This WearGraph version is not compatible or is not running. Update WearGraph to %s or newer and check its notices. Shopping is not affected."
+msgstr ""
+
+#: includes/Integrations/WearGraph.php:99
+msgid "WearGraph is active but no AI provider is connected yet, so try-on is hidden in the store."
+msgstr ""
+
+#: includes/Integrations/WearGraph.php:101
+msgid "Connect a provider"
+msgstr ""
+
+#: includes/Integrations/WearGraph.php:104
+msgid "WearGraph is connected but try-on is switched off, so it is hidden in the store."
+msgstr ""
+
+#: includes/Integrations/WearGraph.php:106
+msgid "Turn on try-on"
+msgstr ""
+
+#: includes/Integrations/WearGraph.php:110
+msgid "Ready. \"Try on me\" appears on products WearGraph marks as ready in its Catalog."
+msgstr ""
+
+#: includes/Integrations/WearGraph.php:111
+msgid "Ready in preview mode: only store managers see \"Try on me\"."
+msgstr ""
+
+#: includes/Integrations/WearGraph.php:113
+msgid "Manage in WearGraph"
+msgstr ""
+
+#. translators: %s: product name
+#: includes/Requirements.php:28
+msgid "%s needs WooCommerce. Install and activate WooCommerce, then reload this page."
+msgstr ""
+
+#. translators: 1: product name, 2: required WooCommerce version, 3: installed version
+#: includes/Requirements.php:37
+msgid "%1$s needs WooCommerce %2$s or newer (you have %3$s). Update WooCommerce under Plugins."
+msgstr ""
+
+#: includes/Rest/ProductContextController.php:124
+msgid "No products were given."
+msgstr ""
+
+#: includes/Rest/ProductContextController.php:149
+msgid "This product is not available."
+msgstr ""
+
+#: includes/Rest/ProductContextController.php:154
+msgid "Please choose an option of this product."
+msgstr ""
