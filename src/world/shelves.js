@@ -21,6 +21,7 @@ import {
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { SHELF } from './scene.js';
 import { drawPackaging, loadImage, makeCanvas, plantCanvas, tagCanvas, tint, toTexture } from './textures.js';
+import { fitted, loadModel, modelFor } from './models.js';
 
 const boxGeo = new BoxGeometry( SHELF.boxW, SHELF.boxH, SHELF.boxD );
 const tagGeo = new PlaneGeometry( 1, 1 );
@@ -95,6 +96,48 @@ export class Shelves {
 			this.sides.set( accent, new MeshStandardMaterial( { color: tint( accent, 0.6 ), roughness: 0.8 } ) );
 		}
 		return this.sides.get( accent );
+	}
+
+	/**
+	 * 3D products (models.js): when an add-on names a model for this product, it replaces the photo boxes
+	 * in the block's slots once it has loaded (the boxes stay if it can't). `alive()` says whether the
+	 * shelf still shows this block (the shopper may have walked on and the aisle been emptied).
+	 */
+	modelise( product, boxes, block, group, pickables, alive ) {
+		const url = modelFor( product );
+		if ( ! url ) {
+			return;
+		}
+		loadModel( url ).then( ( model ) => {
+			if ( ! alive() ) {
+				return;
+			}
+			const q = new Quaternion();
+			block.forEach( ( slot ) => {
+				// A little larger than the box (models have no packaging), standing on the shelf.
+				const copy = fitted( model, SHELF.boxW * 1.15, SHELF.boxH * 1.25, SHELF.boxD * 1.15 );
+				q.setFromAxisAngle( UP, slot.dir * Math.PI / 2 );
+				copy.quaternion.copy( q );
+				copy.position.set( slot.x, slot.y - SHELF.boxH / 2, slot.z );
+				copy.traverse( ( o ) => {
+					if ( o.isMesh ) {
+						o.userData.productId = product.id;
+						pickables.push( o );
+					}
+				} );
+				group.add( copy );
+			} );
+			boxes.visible = false;
+			const at = pickables.indexOf( boxes );
+			if ( at >= 0 ) {
+				pickables.splice( at, 1 );
+			}
+			if ( this.opts.changed ) {
+				this.opts.changed();
+			}
+		} ).catch( () => {
+			// The photo boxes stay.
+		} );
 	}
 
 	/** Packaging texture for a product in a given section colour (shared between facings). */
@@ -176,6 +219,7 @@ export class Shelves {
 			mesh.userData.productId = product.id;
 			group.add( mesh );
 			pickables.push( mesh );
+			this.modelise( product, mesh, block, group, pickables, () => this.aisles[ i ] && this.aisles[ i ].group === group );
 
 			// Price tag under the block (the part of the block on the first shelf run).
 			const first = block[ 0 ];

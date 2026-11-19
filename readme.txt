@@ -5,7 +5,7 @@ Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
 Requires Plugins: woocommerce
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -120,10 +120,18 @@ It bundles [three.js](https://threejs.org/) 0.187.0 (MIT license). To rebuild: `
 
 == Changelog ==
 
+= 1.1.0 =
+* New: shopper events for add-ons (walked in, aisles, products opened, added to the trolley, went to checkout), so add-ons can count what shoppers do. Nothing leaves the page unless an add-on sends it.
+* New: add-ons can show 3D models (.glb) on the shelves instead of the photo boxes.
+* The store keeps working exactly as before when no add-on uses these.
+
 = 1.0.0 =
 * First release: walk-in 3D store from your WooCommerce categories, trolley as the real cart, product panel with variations, checkout lanes, shelf wall and list views, optional WearGraph try-on.
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+Shopper events and 3D model support for add-ons.
 
 = 1.0.0 =
 First release.

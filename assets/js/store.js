@@ -570,7 +570,26 @@
 		} );
 	}
 
+	/**
+	 * Shopper events for add-ons (analytics, for example): a DOM event 'aisleza:track' on the store's
+	 * root (it bubbles) with detail { type, ... }: 'enter' (walked in), 'aisle' { index, label },
+	 * 'counter' (at the checkout counter), 'product' { id, name } (opened), 'add' { id, quantity, name } (in the
+	 * trolley), 'checkout' (went to pay). Nothing leaves the page here; a listener decides.
+	 */
+	function track( type, data ) {
+		try {
+			var detail = { type: type };
+			Object.keys( data || {} ).forEach( function ( k ) {
+				detail[ k ] = data[ k ];
+			} );
+			mount.dispatchEvent( new window.CustomEvent( 'aisleza:track', { bubbles: true, detail: detail } ) );
+		} catch ( e ) {
+			// An add-on's listener never breaks the store.
+		}
+	}
+
 	function enterStore() {
+		track( 'enter' );
 		mount.classList.add( 'is-entering' );
 		ui.doors.classList.add( 'is-open' );
 		ui.welcome.hidden = true;
@@ -944,12 +963,21 @@
 			return;
 		}
 		if ( typeof place === 'number' ) {
+			if ( S.tracked !== place ) {
+				S.tracked = place;
+				track( 'aisle', { index: place, label: sections[ place ] ? String( sections[ place ].label || '' ) : '' } );
+			}
 			S.place = { type: 'section', index: place };
 			S.lastSection = place;
 			prefs.set( 'section', place );
 		} else if ( 'counter' === place ) {
+			if ( S.tracked !== 'counter' ) {
+				S.tracked = 'counter';
+				track( 'counter' );
+			}
 			S.place = { type: 'counter' };
 		} else {
+			S.tracked = null;
 			S.place = { type: 'lobby' };
 		}
 		renderAisles();
@@ -1494,6 +1522,7 @@
 		if ( ! product ) {
 			return;
 		}
+		track( 'product', { id: product.id, name: plain( product.name ) } );
 		P = {
 			token: P.token + 1,
 			product: product,
@@ -1951,6 +1980,7 @@
 		setMessage( '' );
 		refreshProduct();
 		cart.add( payload, itemId ).then( function () {
+			track( 'add', { id: itemId, quantity: qty, name: plain( product.name ) } );
 			P.adding = false;
 			if ( token === P.token ) {
 				refreshProduct();
@@ -2247,6 +2277,7 @@
 
 	/** Wait for queued trolley changes before leaving for checkout. */
 	function guardCheckout( e ) {
+		track( 'checkout' );
 		if ( ! cart.busy() ) {
 			return;
 		}

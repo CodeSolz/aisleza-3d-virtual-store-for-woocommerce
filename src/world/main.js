@@ -34,6 +34,7 @@ import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer.js';
 import { StoreRoom } from './room.js';
 import { buildStore, HELPERS, layout, SHELF } from './scene.js';
 import { registerFixture } from './fixtures.js';
+import { registerProductModels } from './models.js';
 import { registerStyle } from './styles.js';
 import { resolveSkin } from './skin.js';
 import { Shelves } from './shelves.js';
@@ -1852,6 +1853,7 @@ window.AislezaWorld = {
 	},
 	registerStyle,
 	registerFixture,
+	registerProductModels,
 	helpers: HELPERS
 };
 
