@@ -1,6 +1,6 @@
 === Aisleza — 3D Virtual Store for WooCommerce ===
 Contributors: codesolz, m.tuhin
-Tags: woocommerce, 3d, virtual store, virtual shop, shopping
+Tags: virtual store, 3d store, woocommerce, virtual showroom, 3d
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
@@ -9,15 +9,17 @@ Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Turn your WooCommerce shop into a 3D store shoppers walk through: aisles from your categories, a trolley that is the real cart, your normal checkout.
+A 3D virtual store for WooCommerce: shoppers walk aisles made from your categories, pick products off shelves and pay at your normal checkout.
 
 == Description ==
 
 **Turn your online shop into a place to explore.**
 
-Aisleza builds a walk-in 3D store from your WooCommerce catalog. Each product category you choose becomes an aisle with a hanging sign. Your products stand on the shelves with their catalog images and price tags. Shoppers push a trolley down the aisles, pick products off the shelves, and pay at your normal WooCommerce checkout.
+Aisleza is a free 3D virtual store plugin for WooCommerce. It builds a walk-in 3D store, a virtual showroom shoppers can walk through, from your WooCommerce catalog. No 3D models are needed. Each product category you choose becomes an aisle with a hanging sign. Your products stand on the shelves with their catalog images and price tags. Shoppers push a trolley down the aisles, pick products off the shelves, and pay at your normal WooCommerce checkout.
 
 The trolley is your real WooCommerce cart the whole time. Prices, taxes, discounts, stock and checkout all stay WooCommerce's own: Aisleza adds a new way to browse, not a new way to sell.
+
+Everything below is free. Want more? **[Aisleza Pro](https://aisleza.com/pricing/)** adds eight more store interiors, Ava the shopping assistant, a golden box coupon hunt, seasonal makeovers, merchandising tools and shopper insights.
 
 ### The store
 
@@ -50,6 +52,24 @@ The trolley is your real WooCommerce cart the whole time. Prices, taxes, discoun
 ### Optional: WearGraph virtual try-on
 
 If the WearGraph virtual try-on plugin is installed and set up, a "Try on me" button appears on the products WearGraph supports and opens WearGraph's own fitting room. Aisleza works fully without it: when WearGraph is missing or not set up, shoppers see no try-on buttons, and the settings page tells you what is needed.
+
+### Aisleza Pro (optional add-on)
+
+The free plugin is the complete walk-in store. [Aisleza Pro](https://aisleza.com/pricing/) is a separate add-on for shops that want more:
+
+* **Eight more interiors:** Noir, Fresh Market, Studio, Blush, Greenhouse, Library, Loft and Playroom, plus every new one.
+* **Ava, the shopping assistant:** answers questions about your products and walks shoppers to the right shelf. AI conversations with your own Claude or OpenAI key on Business and Agency.
+* **Branding:** your logo on the shop front and trolley, your sign colours and font.
+* **Camera views:** classic, over the trolley, or walk freely.
+* **Merchandising:** a promo table at the entrance, aisle-end displays, automatic aisles (new, on sale, bestsellers), wall posters and TV screens with your videos.
+* **Golden box coupon hunt:** a glowing gift box hidden in an aisle; whoever finds it gets your coupon.
+* **Seasons and ambience:** Christmas, Black Friday, Eid and Halloween makeovers; evening or night outside, rain or snow, background music.
+* **3D products and mannequins:** real 3D models on the shelves and dressed mannequins by the clothing.
+* **More stores:** a kids' store, an outlet or one store per brand on the same site.
+* **Shopper insights:** visits, busiest aisles, products opened and added, checkout rate and a floor heatmap.
+* **Business and Agency plans:** the store designer, your own pictures on floors and walls, and video adverts on the shelf ends. **Agency:** white-label for client sites.
+
+Plans start at $99 a year, or pay once. [See Aisleza Pro plans and prices](https://aisleza.com/pricing/) · [Walk the live demo](https://aisleza.com/demo/)
 
 == Installation ==
 
@@ -108,15 +128,6 @@ Aisleza's settings. Your store page is your content and stays; delete it yoursel
 4. The trolley drawer, with the cart and the way to checkout.
 5. On a phone, with the on-screen joystick.
 6. The settings page: store page, aisles and store options.
-
-== Source code and build ==
-
-The 3D engine `assets/js/world.js` is built from the readable source included in the plugin:
-
-* `src/world/` – the engine (store building, shelves, trolley, textures, skins, styles and the hooks add-ons use).
-* `skins/boutique/skin.json` – the store's look (colours, materials, lighting), as data.
-
-It bundles [three.js](https://threejs.org/) 0.187.0 (MIT license). To rebuild: `npm install`, then `npm run build` (esbuild).
 
 == Changelog ==
 
