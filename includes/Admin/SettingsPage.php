@@ -641,6 +641,7 @@ final class SettingsPage {
 							<label><input type="radio" name="entry_link" value="none" <?php checked( 'none', $settings['entry_link'] ); ?>> <?php esc_html_e( 'Only links I add myself', 'aisleza-3d-virtual-store-for-woocommerce' ); ?></label><br>
 							<label><input type="radio" name="entry_link" value="shop_banner" <?php checked( 'shop_banner', $settings['entry_link'] ); ?>> <?php esc_html_e( 'Also show an “Enter the virtual store” banner above the shop and category grids', 'aisleza-3d-virtual-store-for-woocommerce' ); ?></label>
 						</fieldset>
+						<p><label><input type="checkbox" name="product_link" value="1" <?php checked( (bool) $settings['product_link'] ); ?>> <?php esc_html_e( 'Show “See it in the 3D store” on product pages (it opens the store at that product)', 'aisleza-3d-virtual-store-for-woocommerce' ); ?></label></p>
 						<p class="description">
 							<?php
 							echo wp_kses(
@@ -738,6 +739,7 @@ final class SettingsPage {
 				'child_filters' => ! empty( $_POST['child_filters'] ),
 				'show_empty'    => ! empty( $_POST['show_empty'] ),
 				'entry_link'    => isset( $_POST['entry_link'] ) ? sanitize_key( wp_unslash( $_POST['entry_link'] ) ) : 'none',
+				'product_link'  => ! empty( $_POST['product_link'] ),
 				'open_size'     => isset( $_POST['open_size'] ) ? sanitize_key( wp_unslash( $_POST['open_size'] ) ) : 'page',
 				'sections'      => self::posted_sections( $raw_sections ),
 			)

@@ -378,8 +378,8 @@ export function tagCanvas( name, price, was, accent ) {
 
 /**
  * Product packaging front: the real product image ("contain"), a name strip in the section
- * colour and stickers (try-on, sale, out of stock). Redrawn when the image arrives or a
- * flag changes.
+ * colour and stickers (try-on, new, sale, only N left, out of stock). Redrawn when the image
+ * arrives or a flag changes.
  */
 export function drawPackaging( canvas, image, info ) {
 	const ctx = canvas.getContext( '2d' );
@@ -422,6 +422,17 @@ export function drawPackaging( canvas, image, info ) {
 		ctx.font = '800 22px ' + FONT;
 		ctx.fillText( info.labels.tryOn, 24, 37 );
 	}
+	if ( info.fresh && info.labels.fresh ) {
+		// New: under the try-on sticker when there is one.
+		ctx.font = '800 22px ' + FONT;
+		const nw = Math.min( w * 0.45, ctx.measureText( info.labels.fresh ).width + 28 );
+		const ny = info.tryon ? 56 : 10;
+		ctx.fillStyle = '#1f6f4a';
+		roundRect( ctx, 10, ny, nw, 38, 19 );
+		ctx.fill();
+		ctx.fillStyle = '#ffffff';
+		ctx.fillText( info.labels.fresh, 24, ny + 27 );
+	}
 	if ( info.sale ) {
 		ctx.fillStyle = '#b4301c';
 		roundRect( ctx, w - 92, 10, 82, 38, 19 );
@@ -429,6 +440,19 @@ export function drawPackaging( canvas, image, info ) {
 		ctx.fillStyle = '#ffffff';
 		ctx.font = '800 22px ' + FONT;
 		ctx.fillText( info.labels.sale, w - 78, 37 );
+	}
+	if ( info.left > 0 && ! info.out && info.labels.left ) {
+		// Only N left: a band across the bottom of the picture, just above the name strip.
+		const text = String( info.labels.left ).replace( '%d', String( info.left ) );
+		ctx.font = '800 21px ' + FONT;
+		const lw = Math.min( w - 20, ctx.measureText( text ).width + 28 );
+		ctx.fillStyle = '#e8a317';
+		roundRect( ctx, ( w - lw ) / 2, h - strip - 46, lw, 36, 18 );
+		ctx.fill();
+		ctx.fillStyle = '#2a1d00';
+		ctx.textAlign = 'center';
+		ctx.fillText( text, w / 2, h - strip - 21 );
+		ctx.textAlign = 'left';
 	}
 	if ( info.out ) {
 		ctx.fillStyle = 'rgba(74,78,94,.62)';

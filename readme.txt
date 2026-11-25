@@ -5,7 +5,7 @@ Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
 Requires Plugins: woocommerce
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -171,6 +171,14 @@ Aisleza removes its settings. The page you created for the virtual store stays i
 
 == Changelog ==
 
+= 1.1.1 =
+* Added links that open the 3D store at a product or an aisle: a product link walks the shopper to the product and opens it, an aisle link walks to that aisle.
+* Added "Share this product" in the product window (the phone's share sheet, or a copied link).
+* Added "Show me where it is" for search results in the walk-in store: it walks the shopper to the product's shelf.
+* Added an optional "See it in the 3D store" button for product pages (Settings, Ways in; off by default).
+* Added "New" and "Only N left" stickers on the shelves, from the product's date added (30 days) and WooCommerce's own low-stock count.
+* Added extension points for add-ons: a product window event, opening an open store at a product or aisle, and stores reaching add-ons that load after the store opened.
+
 = 1.1.0 =
 * Added shopper events that add-ons can use to track store entry, aisle visits, product views, cart additions and checkout navigation. The core plugin does not send these events anywhere; add-ons may process or send them.
 * Added support for add-ons to show GLB (.glb) 3D product models on shelves in place of image-based displays.
@@ -184,6 +192,9 @@ Aisleza removes its settings. The page you created for the virtual store stays i
 * Includes shelf wall and list views, plus an optional WearGraph virtual try-on integration.
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+Adds product and aisle links, sharing, "Show me where it is" for search, an optional product page button and New / Only N left shelf stickers.
 
 = 1.1.0 =
 Adds shopper events and support for add-ons that show 3D product models.

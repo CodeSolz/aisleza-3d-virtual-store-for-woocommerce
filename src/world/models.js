@@ -10,6 +10,7 @@
  */
 import { Box3, Group, Vector3 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { USDZExporter } from 'three/examples/jsm/exporters/USDZExporter.js';
 
 let finder = null;
 const cache = new Map(); // url → Promise<{ scene, size }>
@@ -59,6 +60,28 @@ export function loadModel( url ) {
 		} ) );
 	}
 	return cache.get( url );
+}
+
+/**
+ * A model as a USDZ file (a Blob), for AR Quick Look on iPhone and iPad, which reads USDZ, not glTF. Made in
+ * the browser from the same .glb (real size, standing on the floor); cached per address.
+ */
+const usdz = new Map();
+export function toUsdz( url ) {
+	if ( typeof url !== 'string' || ! /^(https?:\/\/|\/)[^\s"'<>]+$/i.test( url ) ) {
+		return Promise.reject( new Error( 'Bad model address' ) );
+	}
+	if ( ! usdz.has( url ) ) {
+		usdz.set( url, loadModel( url ).then( ( model ) => {
+			const wrap = new Group();
+			wrap.add( model.scene.clone( true ) );
+			return new USDZExporter().parseAsync( wrap, { quickLookCompatible: true } );
+		} ).then( ( bytes ) => new Blob( [ bytes ], { type: 'model/vnd.usdz+zip' } ) ).catch( ( e ) => {
+			usdz.delete( url ); // Try again next time.
+			throw e;
+		} ) );
+	}
+	return usdz.get( url );
 }
 
 /** A copy of a loaded model scaled to fit w × h × d (uniformly), standing on y = 0. Shares geometry and materials. */

@@ -34,7 +34,7 @@ import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer.js';
 import { StoreRoom } from './room.js';
 import { buildStore, HELPERS, layout, SHELF } from './scene.js';
 import { registerFixture } from './fixtures.js';
-import { registerProductModels } from './models.js';
+import { registerProductModels, toUsdz } from './models.js';
 import { registerStyle } from './styles.js';
 import { resolveSkin } from './skin.js';
 import { Shelves } from './shelves.js';
@@ -858,6 +858,31 @@ class World {
 		// arrive turned towards the left-hand shelf.
 		const turn = this.camera.aspect < 0.8 ? 0.62 : 0;
 		this.walkTo( L.aisleX( i ), fromBack ? -( L.d2 - 1.1 ) : -( L.d1 + 1.1 ), ( fromBack ? Math.PI : 0 ) + turn );
+	}
+
+	/**
+	 * Walk up to a product stocked on a shelf here and face it. False when it isn't on a shelf (its aisle
+	 * isn't stocked yet, or the product is beyond the aisle's first products).
+	 */
+	walkToProduct( id ) {
+		const spot = this.productSpot( id );
+		if ( ! spot ) {
+			return false;
+		}
+		// Stand facing the product, about an arm's length plus a trolley away (as the shopping assistant does).
+		let sx = spot.x + spot.nx * 1.9;
+		let sz = spot.z + spot.nz * 1.9;
+		if ( ! this.isFree( sx, sz, 0.3 ) ) {
+			sx = spot.x + spot.nx * 1.6;
+			sz = spot.z + spot.nz * 1.6;
+		}
+		this.walkTo( sx, sz, Math.atan2( spot.nx, spot.nz ) );
+		return true;
+	}
+
+	/** Whether the trolley is walking somewhere by itself (a guided walk). */
+	isWalking() {
+		return !! this.auto;
 	}
 
 	teleportToAisle( i ) {
@@ -1822,15 +1847,18 @@ class World {
 		this.trolleyEnv.dispose();
 		this.trolleyRenderer.dispose();
 		this.root.remove();
+		this.destroyed = true;
 	}
 }
 
 const created = [];
+let live = null; // The store the page has open, for add-ons that arrive after it.
 
 window.AislezaWorld = {
 	supported,
 	create: ( container, opts ) => {
 		const world = new World( container, opts );
+		live = world;
 		created.forEach( ( fn ) => {
 			try {
 				fn( world );
@@ -1845,15 +1873,26 @@ window.AislezaWorld = {
 		}
 		return world;
 	},
-	/** An add-on's function, called with every store the page opens (and each rebuild). */
+	/**
+	 * An add-on's function, called with every store the page opens (and each rebuild), and at once with the
+	 * store already open when the add-on arrives after it (platforms that load add-ons late).
+	 */
 	onCreate: ( fn ) => {
 		if ( typeof fn === 'function' ) {
 			created.push( fn );
+			if ( live && ! live.destroyed ) {
+				try {
+					fn( live );
+				} catch ( error ) {
+					console.warn( 'Aisleza: an add-on failed on the open store.', error ); // eslint-disable-line no-console
+				}
+			}
 		}
 	},
 	registerStyle,
 	registerFixture,
 	registerProductModels,
+	toUsdz, // A .glb as a USDZ Blob (AR Quick Look), for add-ons that offer "view in your room".
 	helpers: HELPERS
 };
 

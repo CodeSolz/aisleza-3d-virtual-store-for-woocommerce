@@ -195,6 +195,34 @@
 	/* ------------------------------------------------------------------ */
 
 	var saved = prefs.read();
+
+	/*
+	 * A link that opens the store at a product or an aisle: ?aisleza_product=<product id, or the shop's
+	 * own product reference that the platform's adapter resolves> or ?aisleza_aisle=<category id, aisle
+	 * name or its slug>. A store opened over another page (a product page's button) gets it in the config
+	 * instead: cfg.link = { product } or { aisle }. The shopper walks there (or, without the walk-in store,
+	 * the aisle opens) and the product opens on arrival.
+	 */
+	var link = ( function () {
+		var ref = function ( v ) {
+			v = String( v === undefined || v === null ? '' : v ).trim().slice( 0, 80 );
+			return /^\d+$/.test( v ) ? ( parseInt( v, 10 ) > 0 ? parseInt( v, 10 ) : null ) : ( /^[A-Za-z0-9][A-Za-z0-9_.:-]*$/.test( v ) ? v : null );
+		};
+		var from = function ( product, aisle ) {
+			var id = ref( product );
+			aisle = String( aisle || '' ).trim().toLowerCase().slice( 0, 80 );
+			return id ? { product: id } : ( aisle ? { aisle: aisle } : null );
+		};
+		if ( cfg.link && typeof cfg.link === 'object' ) {
+			return from( cfg.link.product, cfg.link.aisle );
+		}
+		try {
+			var q = new window.URLSearchParams( window.location.search );
+			return from( q.get( 'aisleza_product' ), q.get( 'aisleza_aisle' ) );
+		} catch ( e ) {
+			return null;
+		}
+	}() );
 	var S = {
 		view: 'entrance',
 		place: { type: 'section', index: Math.min( Math.max( parseInt( saved.section, 10 ) || 0, 0 ), Math.max( sections.length - 1, 0 ) ) },
@@ -589,6 +617,11 @@
 	}
 
 	function enterStore() {
+		if ( link ) {
+			track( 'enter' );
+			takeTrolley(); // A link to a product or an aisle: straight in, the trolley comes along.
+			return;
+		}
 		track( 'enter' );
 		mount.classList.add( 'is-entering' );
 		ui.doors.classList.add( 'is-open' );
@@ -784,9 +817,172 @@
 		if ( arriving ) {
 			ui.signTitle.focus( { preventScroll: true } );
 		}
-		if ( 'shelves' !== cfg.view ) {
+		if ( 'shelves' !== cfg.view && cfg.worldJs ) {
 			loadWorld();
+		} else {
+			followLink(); // No walk-in store here: the link opens the aisle or the product.
 		}
+	}
+
+	/* ------------------------------------------------------------------ */
+	/* Links to a product or an aisle                                       */
+	/* ------------------------------------------------------------------ */
+
+	function slugOf( s ) {
+		return String( s || '' ).toLowerCase().replace( /[^a-z0-9À-￿]+/g, '-' ).replace( /^-+|-+$/g, '' );
+	}
+
+	/** The aisle a link names: by category id, aisle name, category name or their slugs; -1 if none. */
+	function aisleNamed( value ) {
+		for ( var i = 0; i < sections.length; i++ ) {
+			var s = sections[ i ];
+			if ( String( s.id ) === value || [ s.label, s.name ].some( function ( n ) {
+				return n && ( String( n ).toLowerCase() === value || slugOf( n ) === slugOf( value ) );
+			} ) ) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/** The category aisle a product belongs to (its category or a sub-category shown as a filter); -1 if none. */
+	function aisleOfProduct( product ) {
+		var cats = ( product.categories || [] ).map( function ( c ) {
+			return String( c.id );
+		} );
+		for ( var i = 0; i < sections.length; i++ ) {
+			var s = sections[ i ];
+			var ids = [ String( s.id ) ].concat( ( s.filters || [] ).map( function ( f ) {
+				return String( f.id );
+			} ) );
+			if ( ! s.query && ids.some( function ( id ) {
+				return cats.indexOf( id ) >= 0;
+			} ) ) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * The aisle of a product: by its categories; where the shop's products carry none (the other
+	 * platforms), the first aisle whose shelves hold it (the same requests the aisles make, cached). -1 if none.
+	 */
+	function findAisle( product ) {
+		var byCategory = aisleOfProduct( product );
+		if ( byCategory >= 0 || ( product.categories || [] ).length ) {
+			return Promise.resolve( byCategory );
+		}
+		var k = 0;
+		var next = function () {
+			if ( k >= sections.length ) {
+				return -1;
+			}
+			var i = k++;
+			return loadAisle( i ).then( function ( products ) {
+				return products.some( function ( p ) {
+					return p.id === product.id;
+				} ) ? i : next();
+			}, next );
+		};
+		return Promise.resolve( next() );
+	}
+
+	/**
+	 * Take the shopper to a product: in the walk-in store, to its aisle (leaving the search view), up to it
+	 * once its shelf is stocked, and open it on arrival; without the walk-in store, its aisle opens with the
+	 * product window. Used by links (?aisleza_product=) and the search's "Show me where it is".
+	 */
+	function takeMeTo( ref ) {
+		var id = ref;
+		fetchShelf( { include: String( ref ), per_page: 1, page: 1 } ).then( function ( data ) {
+			var product = data.products[ 0 ];
+			return product ? findAisle( product ).then( function ( i ) {
+				return [ product, i ];
+			} ) : null;
+		} ).then( function ( found ) {
+			if ( ! found ) {
+				return;
+			}
+			id = found[ 0 ].id; // A shop reference (GUID, slug) becomes the store's own product id.
+			var i = found[ 1 ];
+			if ( ! S.world || S.list ) {
+				if ( i >= 0 ) {
+					go( { type: 'section', index: i } );
+				}
+				openProduct( id, ui.signTitle );
+				return;
+			}
+			if ( i < 0 ) {
+				showProduct( id ); // Not in an aisle: it opens where the shopper stands.
+				return;
+			}
+			go( { type: 'section', index: i } ); // Walks to the aisle and leaves the search view.
+			var tries = 0;
+			var walking = false;
+			( function step() {
+				var w = S.world;
+				if ( ! w || openDialog ) {
+					return; // The shopper took over (or the store closed).
+				}
+				if ( ! walking && w.walkToProduct( id ) ) {
+					walking = true; // Its shelf is stocked: walk up to it.
+				}
+				var stocked = S.aisleProducts[ i ];
+				var missing = stocked && ! stocked.some( function ( p ) {
+					return p.id === id;
+				} );
+				if ( ( walking || missing ) && ! w.isWalking() ) {
+					showProduct( id ); // Arrived (or it isn't on this aisle's shelves): open it.
+					return;
+				}
+				if ( ++tries > 80 ) {
+					showProduct( id );
+					return;
+				}
+				after( 250, step );
+			}() );
+		} ).catch( function () {} );
+	}
+
+	/*
+	 * A store already open over another page (a platform's overlay) can be sent to a product or an aisle
+	 * again: document.dispatchEvent( new CustomEvent( 'aisleza:goto', { detail: { product } or { aisle } } ) ).
+	 */
+	document.addEventListener( 'aisleza:goto', function ( e ) {
+		var d = ( e && e.detail ) || {};
+		if ( openDialog ) {
+			closeDialog();
+		}
+		if ( d.product ) {
+			takeMeTo( d.product );
+		} else if ( d.aisle ) {
+			var a = aisleNamed( String( d.aisle ).trim().toLowerCase() );
+			if ( a >= 0 ) {
+				go( { type: 'section', index: a } );
+			}
+		}
+	} );
+
+	/** Follow the link the page was opened with, once. */
+	function followLink() {
+		if ( ! link || link.done ) {
+			return;
+		}
+		link.done = true;
+		if ( link.aisle ) {
+			var a = aisleNamed( link.aisle );
+			if ( a < 0 ) {
+				return;
+			}
+			if ( S.world ) {
+				S.world.walkToAisle( a );
+			} else {
+				go( { type: 'section', index: a } );
+			}
+			return;
+		}
+		takeMeTo( link.product );
 	}
 
 	/* ------------------------------------------------------------------ */
@@ -806,12 +1002,26 @@
 		script.onload = startWorld;
 		script.onerror = function () {
 			S.worldLoading = false; // The 2.5D shelves stay in place.
+			followLink();
 		};
 		document.body.appendChild( script );
 	}
 
 	function packLabels() {
-		return { tryOn: t.tryOnBadge, sale: t.sale, out: t.outOfStock };
+		return { tryOn: t.tryOnBadge, sale: t.sale, out: t.outOfStock, fresh: t.newBadge || 'New', left: t.onlyLeft || 'Only %d left' };
+	}
+
+	/**
+	 * Live shelf tags: how many are left when the shop says stock is low (the Store API's
+	 * low_stock_remaining), and whether the product is new (extensions.aisleza.new). 0 / false otherwise.
+	 */
+	function stockLeft( product ) {
+		var n = parseInt( product.low_stock_remaining, 10 );
+		return product.is_in_stock && n > 0 && n < 1000 ? n : 0;
+	}
+
+	function isNew( product ) {
+		return !! ( product.extensions && product.extensions.aisleza && product.extensions.aisleza.new );
 	}
 
 	function describe( product ) {
@@ -823,6 +1033,8 @@
 			tryon: !! S.eligible[ product.id ],
 			sale: price.onSale,
 			out: ! product.is_in_stock,
+			left: stockLeft( product ),
+			fresh: isNew( product ),
 			labels: packLabels()
 		};
 	}
@@ -890,6 +1102,7 @@
 	function startWorld() {
 		if ( ! window.AislezaWorld || ! window.AislezaWorld.supported() ) {
 			S.worldLoading = false;
+			followLink();
 			return;
 		}
 		ui.worldBox = el( 'div', { className: 'aisleza-worldbox' } );
@@ -944,6 +1157,7 @@
 			ui.hudCounter.remove();
 			S.world = null;
 			S.worldLoading = false;
+			followLink();
 			return;
 		}
 		S.worldBooting = false;
@@ -955,6 +1169,7 @@
 		if ( ! S.list && ! openDialog ) {
 			S.world.focus();
 		}
+		after( 600, followLink ); // A link to a product or an aisle: walk there once the store stands.
 	}
 
 	/** The shopper walked somewhere: keep the aisle buttons, list and counter card in step. */
@@ -1388,6 +1603,11 @@
 		}
 		if ( ! product.is_in_stock ) {
 			badges.appendChild( el( 'span', { className: 'aisleza-badge aisleza-badge--out', text: t.outOfStock } ) );
+		} else if ( stockLeft( product ) ) {
+			badges.appendChild( el( 'span', { className: 'aisleza-badge aisleza-badge--left', text: fmt( t.onlyLeft || 'Only %d left', stockLeft( product ) ) } ) );
+		}
+		if ( isNew( product ) ) {
+			badges.appendChild( el( 'span', { className: 'aisleza-badge aisleza-badge--new', text: t.newBadge || 'New' } ) );
 		}
 		var tryBadge = el( 'span', { className: 'aisleza-badge aisleza-badge--tryon', text: t.tryOnBadge, hidden: ! S.eligible[ product.id ] } );
 		badges.appendChild( tryBadge );
@@ -1536,6 +1756,13 @@
 		};
 		renderProduct();
 		showDialog( ui.product, trigger, ui.product.panel.querySelector( '#aisleza-product-title' ) );
+		// Add-ons can add their own buttons to the product window (a 3D product's "view in your room"):
+		// a DOM event 'aisleza:product' on the store's root (it bubbles) with { product, actions }.
+		try {
+			mount.dispatchEvent( new window.CustomEvent( 'aisleza:product', { bubbles: true, detail: { product: product, actions: P.actionsEl } } ) );
+		} catch ( e ) {
+			// An add-on never breaks the product window.
+		}
 		loadContext();
 	}
 
@@ -1581,6 +1808,7 @@
 		P.msgEl = el( 'div', { className: 'aisleza-pd__msg', role: 'status' } );
 
 		var actions = el( 'div', { className: 'aisleza-pd__actions' } );
+		P.actionsEl = actions;
 		P.addBtn = el( 'button', { type: 'button', className: 'aisleza-btn aisleza-btn--primary aisleza-btn--big', onclick: addToTrolley, text: t.addToTrolley } );
 		P.tryBtn = el( 'button', { type: 'button', className: 'aisleza-btn aisleza-btn--tryon', hidden: true, 'aria-describedby': 'aisleza-tryon-note', onclick: tryOn }, [
 			el( 'span', { className: 'aisleza-btn__spark', 'aria-hidden': 'true' } ),
@@ -1596,12 +1824,71 @@
 		info.appendChild( actions );
 		info.appendChild( P.tryNote );
 		info.appendChild( P.msgEl );
-		info.appendChild( el( 'p', { className: 'aisleza-pd__link' }, [ el( 'a', { href: product.permalink, text: t.productPage } ) ] ) );
+		if ( S.world && ! S.list && S.place.type === 'search' ) {
+			info.appendChild( el( 'button', { type: 'button', className: 'aisleza-btn aisleza-pd__where', onclick: function () {
+				closeDialog();
+				closeDrawer();
+				ui.search.value = '';
+				takeMeTo( product.id );
+			} }, [ el( 'span', { className: 'aisleza-pd__where-icon', 'aria-hidden': 'true' } ), t.takeMeThere || 'Show me where it is' ] ) );
+		}
+		info.appendChild( el( 'p', { className: 'aisleza-pd__link' }, [
+			el( 'a', { href: product.permalink, text: t.productPage } ),
+			el( 'button', { type: 'button', className: 'aisleza-pd__share', onclick: function () {
+				shareLink( { aisleza_product: product.id }, plain( product.name ) );
+			}, text: t.shareProduct || 'Share this product' } )
+		] ) );
 
 		body.appendChild( el( 'div', { className: 'aisleza-pd' }, [ gallery, info ] ) );
 
 		renderOptions();
 		refreshProduct();
+	}
+
+	/**
+	 * Share a link to this store page that opens at a product or an aisle: the phone's share sheet on
+	 * touch screens, else copied (shown in the product window when copying isn't allowed).
+	 */
+	function shareLink( params, title ) {
+		var url;
+		try {
+			var u = new window.URL( window.location.href );
+			u.hash = '';
+			[ 'aisleza_product', 'aisleza_aisle' ].forEach( function ( k ) {
+				u.searchParams.delete( k );
+			} );
+			Object.keys( params ).forEach( function ( k ) {
+				u.searchParams.set( k, String( params[ k ] ) );
+			} );
+			url = u.toString();
+		} catch ( e ) {
+			return;
+		}
+		var nav = window.navigator;
+		var coarse = window.matchMedia && window.matchMedia( '(pointer: coarse)' ).matches;
+		var copied = t.linkCopied || 'Link copied.';
+		var show = function () {
+			if ( P.msgEl ) {
+				P.msgEl.textContent = '';
+				P.msgEl.appendChild( el( 'input', { className: 'aisleza-input aisleza-pd__url', type: 'text', readOnly: true, value: url, 'aria-label': t.shareProduct || 'Share this product', onfocus: function ( e ) {
+					e.target.select();
+				} } ) );
+			}
+		};
+		if ( coarse && nav.share ) {
+			nav.share( { title: title, url: url } ).catch( function () {} );
+			return;
+		}
+		if ( nav.clipboard && nav.clipboard.writeText ) {
+			nav.clipboard.writeText( url ).then( function () {
+				announce( copied );
+				if ( P.msgEl ) {
+					P.msgEl.textContent = copied;
+				}
+			}, show );
+			return;
+		}
+		show();
 	}
 
 	function setImage( img ) {

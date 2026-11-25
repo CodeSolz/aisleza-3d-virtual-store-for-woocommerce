@@ -12,8 +12,8 @@ defined( 'ABSPATH' ) || exit;
 use Aisleza\Settings;
 
 /**
- * [aisleza_link label="…"] anywhere, and an optional banner above the shop
- * grid ("Entry link: shop banner"). Both stay hidden until the store page is published and
+ * [aisleza_link label="…"] anywhere, an optional banner above the shop grid ("Entry link: shop
+ * banner") and an optional "See it in the 3D store" button on product pages. Both stay hidden until the store page is published and
  * the store is enabled.
  */
 final class EntryLink {
@@ -28,6 +28,39 @@ final class EntryLink {
 		if ( 'shop_banner' === Settings::get( 'entry_link' ) ) {
 			add_action( 'woocommerce_before_shop_loop', array( $this, 'banner' ), 5 );
 		}
+		if ( Settings::get( 'product_link' ) ) {
+			add_action( 'woocommerce_single_product_summary', array( $this, 'product_button' ), 35 );
+		}
+	}
+
+	/**
+	 * The store page at a product: the shopper walks to it and it opens (?aisleza_product=).
+	 *
+	 * @param int $product_id Product id.
+	 */
+	public static function product_url( int $product_id ): string {
+		$url = self::store_url();
+
+		return '' === $url || $product_id <= 0 ? '' : (string) add_query_arg( 'aisleza_product', $product_id, $url );
+	}
+
+	/**
+	 * "See it in the 3D store" on a product page, below the add-to-cart button.
+	 */
+	public function product_button(): void {
+		global $product;
+		if ( ! $product instanceof \WC_Product || ! $product->is_visible() ) {
+			return;
+		}
+		$url = self::product_url( (int) $product->get_id() );
+		if ( '' === $url ) {
+			return;
+		}
+		printf(
+			'<p class="aisleza-product-link"><a class="button aisleza-product-link__btn" href="%1$s">%2$s</a></p>',
+			esc_url( $url ),
+			esc_html__( 'See it in the 3D store', 'aisleza-3d-virtual-store-for-woocommerce' )
+		);
 	}
 
 	/**

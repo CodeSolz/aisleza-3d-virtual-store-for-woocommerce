@@ -58,6 +58,7 @@ final class Settings {
 			'per_shelf'     => 12,
 			'child_filters' => true,
 			'entry_link'    => 'none',
+			'product_link'  => false,
 			'open_size'     => 'page',
 		);
 	}
@@ -134,6 +135,7 @@ final class Settings {
 		$out['child_filters'] = ! array_key_exists( 'child_filters', $raw ) || ! empty( $raw['child_filters'] );
 		$out['per_shelf']     = isset( $raw['per_shelf'] ) ? max( self::MIN_PER_SHELF, min( self::MAX_PER_SHELF, absint( $raw['per_shelf'] ) ) ) : 12;
 		$out['entry_link']    = in_array( $raw['entry_link'] ?? '', self::ENTRY_LINKS, true ) ? (string) $raw['entry_link'] : 'none';
+		$out['product_link']  = ! empty( $raw['product_link'] );
 		$out['open_size']     = in_array( $raw['open_size'] ?? '', self::OPEN_SIZES, true ) ? (string) $raw['open_size'] : 'page';
 		$out['sections']      = isset( $raw['sections'] ) && is_array( $raw['sections'] ) ? self::sections( $raw['sections'] ) : null;
 
