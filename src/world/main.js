@@ -34,6 +34,7 @@ import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer.js';
 import { StoreRoom } from './room.js';
 import { buildStore, HELPERS, layout, SHELF } from './scene.js';
 import { registerFixture } from './fixtures.js';
+import { liteReason, rememberSlow } from './lite.js';
 import { registerProductModels, toUsdz } from './models.js';
 import { registerStyle } from './styles.js';
 import { resolveSkin } from './skin.js';
@@ -50,6 +51,8 @@ const LOOK = 0.0042;
 const BODY_R = 0.3;
 const PIXELS = 3.2e6; // Most device pixels drawn per frame (desktop): about 2400 × 1350.
 const PIXELS_PHONE = 1.6e6;
+const PIXELS_LITE = 0.9e6; // Lite mode (lite.js): about 1270 × 710.
+const LITE_AFTER = 3; // Slow judgements in a row at the lowest sharpness before the store turns lite.
 // The trolley's footprint, pivoting at the handle in the shopper's hands: how far ahead the basket
 // centre rides (REACH, pulled in to REACH_MIN beside shelving), how far it may angle away from
 // straight ahead (SWIVEL), and its rectangle (half width, length from the handle to the nose).
@@ -142,6 +145,10 @@ class World {
 		this.loaded = {};
 		this.bumpT = 0;
 		this.lastAisleCheck = 0;
+		// Lite mode (lite.js): a lighter store on weak devices, chosen before it is built.
+		this.liteWhy = liteReason();
+		this.lite = !! this.liteWhy;
+		this.liteFns = [];
 
 		this.buildDom();
 		this.buildScene();
@@ -212,13 +219,15 @@ class World {
 	/* -------------------------------------------------------------- Scene */
 
 	buildScene() {
-		const mobile = this.coarse || Math.min( window.innerWidth, window.innerHeight ) < 640;
+		const lite = this.lite;
+		// Phones and lite mode: no antialiasing, so thin repeated geometry is drawn as pictures.
+		const mobile = lite || this.coarse || Math.min( window.innerWidth, window.innerHeight ) < 640;
 		this.renderer = new WebGLRenderer( { canvas: this.canvas, antialias: ! mobile, powerPreference: 'default' } );
 		// Sharpness within a pixel budget: a full-screen store on a large or high-density screen
 		// draws at most PIXELS device pixels a frame (and lowers that further, in steps, when frames
 		// come too slowly on a weak graphics chip; see adaptQuality).
-		this.maxRatio = Math.min( window.devicePixelRatio || 1, mobile ? 1.25 : 1.6 );
-		this.pixelBudget = mobile ? PIXELS_PHONE : PIXELS;
+		this.maxRatio = lite ? 1 : Math.min( window.devicePixelRatio || 1, mobile ? 1.25 : 1.6 );
+		this.pixelBudget = lite ? PIXELS_LITE : ( mobile ? PIXELS_PHONE : PIXELS );
 		this.quality = 1;
 		this.renderer.setPixelRatio( this.maxRatio );
 		this.renderer.outputColorSpace = SRGBColorSpace;
@@ -230,10 +239,9 @@ class World {
 		this.scene = new Scene();
 		this.scene.background = new Color( light.background );
 		this.scene.fog = new Fog( light.background, light.fogNear, light.fogFar );
-		// A soft studio environment gives the stone, wood and glass their sheen (no shadow maps).
-		const pmrem = new PMREMGenerator( this.renderer );
-		this.envMap = pmrem.fromScene( new StoreRoom(), 0.04 ).texture;
-		pmrem.dispose();
+		// A soft studio environment gives the stone, wood, chrome and glass their sheen (no shadow maps). Lite
+		// mode keeps it: without it metal turns dark and the store looks cheap, for little gain.
+		this.envMap = this.studio( this.renderer );
 		this.scene.environment = this.envMap;
 		this.scene.environmentIntensity = light.environment;
 		this.scene.add( new HemisphereLight( light.sky, light.ground, light.hemisphere ) );
@@ -251,9 +259,7 @@ class World {
 		this.trolleyRenderer.setClearColor( 0x000000, 0 );
 		this.trolleyScene = new Scene();
 		// Its own reflections (a canvas cannot borrow another canvas's textures).
-		const trolleyPmrem = new PMREMGenerator( this.trolleyRenderer );
-		this.trolleyEnv = trolleyPmrem.fromScene( new StoreRoom(), 0.04 ).texture;
-		trolleyPmrem.dispose();
+		this.trolleyEnv = this.studio( this.trolleyRenderer );
 		this.trolleyScene.environment = this.trolleyEnv;
 		this.trolleyScene.environmentIntensity = light.environment;
 		this.trolleyScene.add( new HemisphereLight( light.sky, light.ground, light.hemisphere ) );
@@ -266,6 +272,7 @@ class World {
 
 		const built = buildStore( this.L, {
 			mobile, // No antialiasing here, so thin repeated geometry is drawn as pictures instead.
+			lite, // Fewer leaf cards (each one is drawn through its transparent parts).
 			accent: this.o.accent,
 			skin: this.skin,
 			storeName: this.o.storeName,
@@ -305,6 +312,7 @@ class World {
 
 		this.shelves = new Shelves( this.L, {
 			skin: this.skin,
+			lite: () => this.lite, // No 3D product models in lite mode: the photo boxes stay.
 			describe: this.o.describe,
 			changed: () => this.request()
 		} );
@@ -1350,6 +1358,17 @@ class World {
 		if ( now - q.at < 2000 ) {
 			return; // Just resized (or changed quality): wait for the browser to settle.
 		}
+		// Still slow at the lowest sharpness: this device needs the lite store (and gets it next time too).
+		if ( ! this.lite && this.quality <= 0.56 && avg > Math.max( 40, q.base * 2.4 ) ) {
+			q.slow = ( q.slow || 0 ) + 1;
+			if ( q.slow >= LITE_AFTER ) {
+				this.goLite( 'slow' );
+				q.at = now;
+				return;
+			}
+		} else {
+			q.slow = 0;
+		}
 		if ( avg > Math.max( 22, q.base * 1.6 ) ) {
 			// Very slow frames step down harder.
 			next = Math.max( 0.55, this.quality * ( avg > Math.max( 60, q.base * 4 ) ? 0.7 : 0.85 ) );
@@ -1367,6 +1386,59 @@ class World {
 			this.quality = next;
 			q.at = now;
 			q.pending = q.pending || now;
+		}
+	}
+
+	/** The soft studio reflections for one renderer. */
+	studio( renderer ) {
+		const pmrem = new PMREMGenerator( renderer );
+		const map = pmrem.fromScene( new StoreRoom(), 0.04 ).texture;
+		pmrem.dispose();
+		return map;
+	}
+
+	/**
+	 * Turn this open store lite (it drew too slowly at its lowest sharpness): a smaller drawing size and no
+	 * 3D models on the shelves it stocks from now on; add-ons hear it through
+	 * onLite and the window event 'aisleza:lite'. Remembered on the device (lite.js), so the next visit
+	 * starts lite and fully lighter (the store's geometry is chosen when it is built).
+	 */
+	goLite( why ) {
+		if ( this.lite || this.destroyed ) {
+			return;
+		}
+		this.lite = true;
+		this.liteWhy = why || 'slow';
+		if ( 'slow' === this.liteWhy ) {
+			rememberSlow();
+		}
+		this.maxRatio = 1;
+		this.pixelBudget = Math.min( this.pixelBudget, PIXELS_LITE );
+		this.quality = 1; // Judged afresh at the smaller size.
+		this.liteFns.slice().forEach( ( fn ) => this.callLite( fn ) );
+		try {
+			window.dispatchEvent( new CustomEvent( 'aisleza:lite', { detail: { world: this, reason: this.liteWhy } } ) );
+		} catch ( e ) {}
+		this.resize();
+		this.request();
+	}
+
+	/** An add-on's function for lite mode: called at once when the store is lite, else when it turns lite. */
+	onLite( fn ) {
+		if ( typeof fn !== 'function' ) {
+			return;
+		}
+		this.liteFns.push( fn );
+		if ( this.lite ) {
+			this.callLite( fn );
+		}
+	}
+
+	callLite( fn ) {
+		try {
+			fn( this );
+		} catch ( error ) {
+			console.warn( 'Aisleza: an add-on failed to turn lite.', error ); // eslint-disable-line no-console
 		}
 	}
 
@@ -1492,6 +1564,11 @@ class World {
 
 	setEligible( id, flag ) {
 		this.shelves.setEligible( id, flag );
+	}
+
+	/** The shopper saved or removed a product (the wishlist): its boxes show or lose the heart. */
+	setSaved( id, flag ) {
+		this.shelves.setSaved( id, !! flag );
 	}
 
 	focus() {
@@ -1856,6 +1933,8 @@ let live = null; // The store the page has open, for add-ons that arrive after i
 
 window.AislezaWorld = {
 	supported,
+	/** Whether the open store (or, before one opens, this device) gets the lighter lite store. */
+	isLite: () => ( live && ! live.destroyed ? live.lite : !! liteReason() ),
 	create: ( container, opts ) => {
 		const world = new World( container, opts );
 		live = world;

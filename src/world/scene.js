@@ -646,7 +646,9 @@ export function buildStore( L, opts ) {
 	const g = new Group();
 	const obstacles = [];
 	const batch = new Batch();
-	const S = opts.skin;
+	// Lite mode: no trailing plants or plants on the gondolas (leaf cards are drawn through their
+	// transparent parts, which weak graphics chips feel most); the trees and the rest stay.
+	const S = opts.lite ? Object.assign( {}, opts.skin, { decor: Object.assign( {}, opts.skin.decor, { hangingPlants: false, gondolaPlants: false } ) } ) : opts.skin;
 	const M = materials( S );
 	const accent = opts.accent;
 	const width = L.xMax - L.xMin;

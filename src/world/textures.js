@@ -378,7 +378,7 @@ export function tagCanvas( name, price, was, accent ) {
 
 /**
  * Product packaging front: the real product image ("contain"), a name strip in the section
- * colour and stickers (try-on, new, sale, only N left, out of stock). Redrawn when the image
+ * colour and stickers (try-on, new, sale, saved, only N left, out of stock). Redrawn when the image
  * arrives or a flag changes.
  */
 export function drawPackaging( canvas, image, info ) {
@@ -440,6 +440,22 @@ export function drawPackaging( canvas, image, info ) {
 		ctx.fillStyle = '#ffffff';
 		ctx.font = '800 22px ' + FONT;
 		ctx.fillText( info.labels.sale, w - 78, 37 );
+	}
+	if ( info.saved ) {
+		// Saved by this shopper (the wishlist): a heart in a white disc, top right (under the sale sticker).
+		const r = 21;
+		const cx = w - 10 - r;
+		const cy = ( info.sale ? 56 : 10 ) + r;
+		ctx.fillStyle = '#ffffff';
+		ctx.beginPath();
+		ctx.arc( cx, cy, r, 0, Math.PI * 2 );
+		ctx.fill();
+		ctx.fillStyle = '#d6336c';
+		ctx.beginPath();
+		ctx.moveTo( cx, cy + 10 );
+		ctx.bezierCurveTo( cx - 14, cy, cx - 12, cy - 12, cx, cy - 5 );
+		ctx.bezierCurveTo( cx + 12, cy - 12, cx + 14, cy, cx, cy + 10 );
+		ctx.fill();
 	}
 	if ( info.left > 0 && ! info.out && info.labels.left ) {
 		// Only N left: a band across the bottom of the picture, just above the name strip.

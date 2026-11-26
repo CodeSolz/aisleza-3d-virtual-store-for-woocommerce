@@ -104,6 +104,9 @@ export class Shelves {
 	 * shelf still shows this block (the shopper may have walked on and the aisle been emptied).
 	 */
 	modelise( product, boxes, block, group, pickables, alive ) {
+		if ( this.opts.lite && this.opts.lite() ) {
+			return; // Lite mode keeps the photo boxes.
+		}
 		const url = modelFor( product );
 		if ( ! url ) {
 			return;
@@ -172,6 +175,18 @@ export class Shelves {
 		this.packs.forEach( ( p ) => {
 			if ( p.id === id && p.info.tryon !== flag ) {
 				p.info.tryon = flag;
+				drawPackaging( p.canvas, p.image, p.info );
+				p.texture.needsUpdate = true;
+			}
+		} );
+		this.opts.changed();
+	}
+
+	/** The shopper saved or removed a product (the wishlist): redraw its heart. */
+	setSaved( id, flag ) {
+		this.packs.forEach( ( p ) => {
+			if ( p.id === id && !! p.info.saved !== flag ) {
+				p.info.saved = flag;
 				drawPackaging( p.canvas, p.image, p.info );
 				p.texture.needsUpdate = true;
 			}

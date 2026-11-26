@@ -2538,3 +2538,81 @@ body.admin-bar .aisleza.is-fill {
 	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z'/%3E%3Ccircle cx='12' cy='9.5' r='2.5'/%3E%3C/svg%3E") center / contain no-repeat;
 	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z'/%3E%3Ccircle cx='12' cy='9.5' r='2.5'/%3E%3C/svg%3E") center / contain no-repeat;
 }
+
+/* Saved products (the wishlist): the heart icon, the drawer's "Saved products", the product window's button. */
+.aisleza .aisleza-heart {
+	display: inline-block;
+	flex: 0 0 auto;
+	width: 18px;
+	height: 18px;
+	background: currentColor;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linejoin='round'%3E%3Cpath d='M12 20.5s-8-4.9-8-10.6A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 8 2.6c0 5.7-8 10.6-8 10.6z'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linejoin='round'%3E%3Cpath d='M12 20.5s-8-4.9-8-10.6A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 8 2.6c0 5.7-8 10.6-8 10.6z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.aisleza .is-saved .aisleza-heart,
+.aisleza .has-saved .aisleza-heart {
+	-webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 20.5s-8-4.9-8-10.6A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 8 2.6c0 5.7-8 10.6-8 10.6z'/%3E%3C/svg%3E");
+	mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 20.5s-8-4.9-8-10.6A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 8 2.6c0 5.7-8 10.6-8 10.6z'/%3E%3C/svg%3E");
+	background: #d6336c;
+}
+
+.aisleza .aisleza-saved-btn {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: calc(100% - 32px);
+	margin: 0 16px 12px;
+	padding: 10px 14px;
+	border: 1.5px solid var(--aisleza-line);
+	border-radius: 12px;
+	background: var(--aisleza-ivory);
+	color: var(--aisleza-ink);
+	font: inherit;
+	font-size: 15px;
+	font-weight: 600;
+	text-align: left;
+	cursor: pointer;
+}
+
+.aisleza .aisleza-saved-btn:hover {
+	border-color: var(--aisleza-ink);
+	background: #fff;
+}
+
+.aisleza .aisleza-saved-btn:focus-visible,
+.aisleza .aisleza-pd__save:focus-visible {
+	outline: 2px solid var(--aisleza-accent);
+	outline-offset: 2px;
+}
+
+.aisleza .aisleza-pd__save {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	border: 1.5px solid var(--aisleza-line);
+	background: #fff;
+	color: var(--aisleza-ink);
+}
+
+.aisleza .aisleza-pd__save.is-saved {
+	border-color: #d6336c;
+	color: #a61e4d;
+}
+
+.aisleza .aisleza-chip--strong {
+	border-color: var(--aisleza-ink);
+	background: var(--aisleza-ink);
+	color: #fff;
+}
+
+.aisleza .aisleza-saved-msg {
+	align-self: center;
+	color: var(--aisleza-muted);
+	font-size: 14px;
+}
+
+.aisleza .aisleza-saved-msg .aisleza-pd__url {
+	min-width: 260px;
+}

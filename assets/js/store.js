@@ -29,6 +29,7 @@
 	var motion = window.matchMedia ? window.matchMedia( '(prefers-reduced-motion: reduce)' ) : { matches: false };
 	var SEARCH_DELAY = 300;
 	var CACHE_LIMIT = 40;
+	var SAVED_MAX = 60;
 
 	/* ------------------------------------------------------------------ */
 	/* Small helpers                                                        */
@@ -123,6 +124,74 @@
 		}
 	};
 
+	/** A product id or the shop's own product reference (a GUID, a slug), as links take them; else null. */
+	function productRef( v ) {
+		v = String( v === undefined || v === null ? '' : v ).trim().slice( 0, 80 );
+		return /^\d+$/.test( v ) ? ( parseInt( v, 10 ) > 0 ? parseInt( v, 10 ) : null ) : ( /^[A-Za-z0-9][A-Za-z0-9_.:-]*$/.test( v ) ? v : null );
+	}
+
+	/** A list of product refs (an array, or "12,34" from a link), cleaned, without repeats, at most SAVED_MAX. */
+	function productRefs( list ) {
+		var out = [];
+		( Array.isArray( list ) ? list : String( list || '' ).split( ',' ) ).forEach( function ( v ) {
+			var r = productRef( v );
+			if ( null !== r && out.indexOf( r ) < 0 && out.length < SAVED_MAX ) {
+				out.push( r );
+			}
+		} );
+		return out;
+	}
+
+	/*
+	 * Saved products (a wishlist): kept on this device for the shop (localStorage), newest first, no account
+	 * needed. Shared with a link (?aisleza_saved=12,34), which opens the list in the store.
+	 */
+	var wish = {
+		key: 'aisleza:saved',
+		read: function () {
+			try {
+				return productRefs( JSON.parse( window.localStorage.getItem( this.key ) ) );
+			} catch ( e ) {
+				return [];
+			}
+		},
+		write: function ( list ) {
+			try {
+				window.localStorage.setItem( this.key, JSON.stringify( list ) );
+			} catch ( e ) {}
+		},
+		has: function ( id ) {
+			return this.read().indexOf( id ) >= 0;
+		},
+		/** Save or remove one product; returns whether it is saved now (false when the list is full). */
+		toggle: function ( id ) {
+			var list = this.read();
+			var at = list.indexOf( id );
+			if ( at >= 0 ) {
+				list.splice( at, 1 );
+			} else if ( list.length < SAVED_MAX ) {
+				list.unshift( id );
+			} else {
+				return false;
+			}
+			this.write( list );
+			return at < 0;
+		},
+		/** Add several (a shared list) in front; returns how many were new. */
+		addAll: function ( ids ) {
+			var list = this.read();
+			var added = 0;
+			ids.slice().reverse().forEach( function ( id ) {
+				if ( list.indexOf( id ) < 0 ) {
+					list.unshift( id );
+					added++;
+				}
+			} );
+			this.write( list.slice( 0, SAVED_MAX ) );
+			return added;
+		}
+	};
+
 	function getJSON( url, signal ) {
 		return window.fetch( url, { credentials: 'same-origin', headers: { Accept: 'application/json' }, signal: signal } ).then( function ( res ) {
 			return res.json().catch( function () {
@@ -204,10 +273,7 @@
 	 * the aisle opens) and the product opens on arrival.
 	 */
 	var link = ( function () {
-		var ref = function ( v ) {
-			v = String( v === undefined || v === null ? '' : v ).trim().slice( 0, 80 );
-			return /^\d+$/.test( v ) ? ( parseInt( v, 10 ) > 0 ? parseInt( v, 10 ) : null ) : ( /^[A-Za-z0-9][A-Za-z0-9_.:-]*$/.test( v ) ? v : null );
-		};
+		var ref = productRef;
 		var from = function ( product, aisle ) {
 			var id = ref( product );
 			aisle = String( aisle || '' ).trim().toLowerCase().slice( 0, 80 );
@@ -218,11 +284,17 @@
 		}
 		try {
 			var q = new window.URLSearchParams( window.location.search );
-			return from( q.get( 'aisleza_product' ), q.get( 'aisleza_aisle' ) );
+			var shared = productRefs( q.get( 'aisleza_saved' ) );
+			return shared.length ? { saved: shared } : from( q.get( 'aisleza_product' ), q.get( 'aisleza_aisle' ) );
 		} catch ( e ) {
 			return null;
 		}
 	}() );
+
+	/** The search results and the saved products show as a list over the 3D store, not as a walk. */
+	function listPlace( place ) {
+		return 'search' === place.type || 'saved' === place.type;
+	}
 	var S = {
 		view: 'entrance',
 		place: { type: 'section', index: Math.min( Math.max( parseInt( saved.section, 10 ) || 0, 0 ), Math.max( sections.length - 1, 0 ) ) },
@@ -508,6 +580,13 @@
 		searchForm.appendChild( ui.search );
 		ui.drawer.appendChild( searchForm );
 
+		ui.savedBtn = el( 'button', { type: 'button', className: 'aisleza-saved-btn', onclick: function () {
+			closeDrawer( false );
+			openSaved();
+		} }, [ el( 'span', { className: 'aisleza-heart', 'aria-hidden': 'true' } ), el( 'span', { className: 'aisleza-saved-btn__text' } ) ] );
+		ui.drawer.appendChild( ui.savedBtn );
+		renderSavedCount();
+
 		ui.aisles = el( 'nav', { className: 'aisleza-aisles', 'aria-labelledby': 'aisleza-aisles-title' } );
 		ui.aisles.appendChild( el( 'p', { className: 'aisleza-aisles__title', id: 'aisleza-aisles-title', text: t.aislesMenu } ) );
 		ui.aisleList = el( 'ul', { className: 'aisleza-aisles__list' } );
@@ -616,6 +695,20 @@
 		}
 	}
 
+	/** Scroll the page just enough to show the store: all of it when it fits, else from its top. */
+	function keepInView() {
+		var r = mount.getBoundingClientRect();
+		var h = window.innerHeight || document.documentElement.clientHeight;
+		if ( r.top >= 0 && r.bottom <= h ) {
+			return;
+		}
+		try {
+			mount.scrollIntoView( { block: r.height <= h ? 'nearest' : 'start' } );
+		} catch ( e ) {
+			// Very old browsers: the store stays where it is.
+		}
+	}
+
 	function enterStore() {
 		if ( link ) {
 			track( 'enter' );
@@ -630,7 +723,10 @@
 		var units = Core.cartUnits( S.cart );
 		ui.bayText.textContent = units ? fmt( t.welcomeBack, itemsLabel( units ) ) : t.takeTrolleyLead;
 		ui.takeBtn.textContent = units ? t.takeYourTrolley : t.takeTrolley;
-		ui.takeBtn.focus();
+		// Bring the whole store into view (not just the button, which would leave its top cut off
+		// when the store sits lower on the page), then focus without the browser's own scroll.
+		keepInView();
+		ui.takeBtn.focus( { preventScroll: true } );
 	}
 
 	function takeTrolley() {
@@ -970,6 +1066,10 @@
 			return;
 		}
 		link.done = true;
+		if ( link.saved ) {
+			openSaved( link.saved );
+			return;
+		}
 		if ( link.aisle ) {
 			var a = aisleNamed( link.aisle );
 			if ( a < 0 ) {
@@ -1035,6 +1135,7 @@
 			out: ! product.is_in_stock,
 			left: stockLeft( product ),
 			fresh: isNew( product ),
+			saved: wish.has( product.id ),
 			labels: packLabels()
 		};
 	}
@@ -1174,7 +1275,7 @@
 
 	/** The shopper walked somewhere: keep the aisle buttons, list and counter card in step. */
 	function onWorldPlace( place ) {
-		if ( S.place.type === 'search' ) {
+		if ( listPlace( S.place ) ) {
 			return;
 		}
 		if ( typeof place === 'number' ) {
@@ -1282,7 +1383,7 @@
 	/** Travel to an aisle, the search aisle or the checkout counter. Never waits for animation. */
 	function go( place, opts ) {
 		opts = opts || {};
-		if ( S.world && ! S.list && place.type !== 'search' ) {
+		if ( S.world && ! S.list && ! listPlace( place ) ) {
 			// Walk there in the 3D store; onWorldPlace() updates everything on arrival.
 			S.place = place;
 			if ( place.type === 'section' ) {
@@ -1305,7 +1406,7 @@
 			return;
 		}
 		if ( S.world ) {
-			mount.classList.toggle( 'is-searching', place.type === 'search' );
+			mount.classList.toggle( 'is-searching', listPlace( place ) );
 		}
 		var from = S.place;
 		var fromIndex = from.type === 'section' ? from.index : ( from.type === 'counter' ? sections.length : -1 );
@@ -1351,6 +1452,9 @@
 		if ( S.place.type === 'search' ) {
 			return fmt( t.searchResults, S.place.q );
 		}
+		if ( S.place.type === 'saved' ) {
+			return S.place.shared ? t.sharedList || 'A shared list' : t.savedList || 'Saved products';
+		}
 		var section = sections[ S.place.index ];
 		return section ? section.label : cfg.storeName;
 	}
@@ -1372,6 +1476,9 @@
 			ui.signImg.removeAttribute( 'src' );
 		}
 		renderFilters( section );
+		if ( S.place.type === 'saved' ) {
+			renderSavedBar();
+		}
 
 		if ( S.place.type === 'counter' ) {
 			if ( S.shelfReq ) {
@@ -1426,6 +1533,10 @@
 
 	function shelfQuery( page ) {
 		var base = { per_page: cfg.perShelf, page: page, orderby: cfg.orderby, order: cfg.order };
+		if ( S.place.type === 'saved' ) {
+			var ids = savedIds();
+			return { include: ids.join( ',' ), per_page: Math.max( 1, ids.length ), page: 1, catalog_visibility: 'catalog' };
+		}
 		if ( S.place.type === 'search' ) {
 			base.search = S.place.q;
 			base.catalog_visibility = 'search';
@@ -1492,6 +1603,11 @@
 		}
 		var controller = typeof AbortController !== 'undefined' ? new AbortController() : { abort: function () {}, signal: undefined };
 		S.shelfReq = controller;
+		if ( S.place.type === 'saved' && ! savedIds().length ) {
+			S.shelfReq = null;
+			renderShelf( { products: [], pages: 1, total: 0 } );
+			return;
+		}
 		var query = shelfQuery( S.page );
 		var place = placeKey( S.place ) + ':' + ( S.place.q || '' );
 
@@ -1503,7 +1619,7 @@
 				return;
 			}
 			S.shelfReq = null;
-			renderShelf( data );
+			renderShelf( S.place.type === 'saved' ? inSavedOrder( data ) : data );
 			checkTryOn( data.products );
 			// The next shelf of this aisle is "nearby": fetch it quietly, nothing further.
 			if ( S.page < data.pages ) {
@@ -1542,6 +1658,13 @@
 		ui.shelving.removeAttribute( 'aria-busy' );
 		if ( ! data.products.length ) {
 			ui.shelfNav.hidden = true;
+			if ( S.place.type === 'saved' ) {
+				ui.shelving.appendChild( notice( t.savedEmpty || 'Nothing saved yet. Press the heart in a product window to keep it here for later.', [
+					el( 'button', { type: 'button', className: 'aisleza-btn', onclick: leaveSaved, text: t.backToStore || 'Back to the store' } )
+				] ) );
+				announce( signLabel() );
+				return;
+			}
 			var text = S.place.type === 'search' ? fmt( t.noResults, S.place.q ) : t.emptyShelf;
 			ui.shelving.appendChild( notice( text, [
 				el( 'button', { type: 'button', className: 'aisleza-btn', onclick: function () {
@@ -1565,6 +1688,8 @@
 		ui.shelfLabel.textContent = fmt( t.shelfCount, S.page, data.pages );
 		if ( S.place.type === 'search' ) {
 			announce( fmt( t.resultsCount, data.total, S.place.q ) );
+		} else if ( S.place.type === 'saved' ) {
+			announce( signLabel() + ': ' + data.products.length );
 		} else if ( S.announceShelf ) {
 			announce( fmt( t.shelfCount, S.page, data.pages ) );
 		}
@@ -1732,6 +1857,119 @@
 	}
 
 	/* ------------------------------------------------------------------ */
+	/* Saved products                                                       */
+	/* ------------------------------------------------------------------ */
+
+	/** The ids the saved view shows: a shared list's, else this device's. */
+	function savedIds() {
+		return S.place.shared ? S.place.shared : wish.read();
+	}
+
+	/** The Store API answers in its own order: show the list's (newest saved first). */
+	function inSavedOrder( data ) {
+		var ids = savedIds();
+		var pos = function ( p ) {
+			var i = ids.indexOf( p.id );
+			return i < 0 ? ids.length : i;
+		};
+		return { products: data.products.slice().sort( function ( a, b ) {
+			return pos( a ) - pos( b );
+		} ), pages: 1, total: data.products.length };
+	}
+
+	/** Show the saved products (or a shared list) as a list; in the walk-in store, over the store. */
+	function openSaved( shared ) {
+		if ( ! ui.signTitle ) {
+			return;
+		}
+		go( { type: 'saved', shared: shared && shared.length ? shared : null } );
+		ui.signTitle.focus( { preventScroll: true } );
+	}
+
+	/** Back from the saved list to the aisle the shopper was in. */
+	function leaveSaved() {
+		go( { type: 'section', index: S.lastSection }, { quiet: true } );
+		if ( S.world && ! S.list ) {
+			mount.classList.remove( 'is-searching' );
+			S.world.focus();
+		}
+	}
+
+	/** The saved list's buttons, in the bar above the shelf: share it (or keep a shared one), back to the store. */
+	function renderSavedBar() {
+		var bar = ui.filters;
+		bar.textContent = '';
+		bar.hidden = false;
+		var shared = S.place.shared;
+		if ( shared ) {
+			bar.appendChild( el( 'button', { type: 'button', className: 'aisleza-chip aisleza-chip--strong', onclick: function () {
+				wish.addAll( shared );
+				renderSavedCount();
+				refreshHearts( shared );
+				announce( t.keptShared || 'Saved to your list.' );
+				ui.savedMsg.textContent = t.keptShared || 'Saved to your list.';
+			}, text: t.keepShared || 'Save these to my list' } ) );
+		} else if ( wish.read().length ) {
+			bar.appendChild( el( 'button', { type: 'button', className: 'aisleza-chip', onclick: function () {
+				shareLink( { aisleza_saved: wish.read().join( ',' ) }, t.savedList || 'Saved products' );
+			}, text: t.shareSaved || 'Share my list' } ) );
+		}
+		bar.appendChild( el( 'button', { type: 'button', className: 'aisleza-chip', onclick: leaveSaved, text: t.backToStore || 'Back to the store' } ) );
+		ui.savedMsg = el( 'span', { className: 'aisleza-saved-msg', role: 'status' } );
+		bar.appendChild( ui.savedMsg );
+	}
+
+	/** The drawer's "Saved products (n)". */
+	function renderSavedCount() {
+		if ( ! ui.savedBtn ) {
+			return;
+		}
+		var n = wish.read().length;
+		ui.savedBtn.querySelector( '.aisleza-saved-btn__text' ).textContent = n ? fmt( t.savedCount || 'Saved products (%d)', n ) : t.savedList || 'Saved products';
+		ui.savedBtn.classList.toggle( 'has-saved', n > 0 );
+	}
+
+	/** The product window's heart: pressed when this product is saved. */
+	function renderSaveBtn() {
+		if ( ! P.saveBtn || ! P.product ) {
+			return;
+		}
+		var on = wish.has( P.product.id );
+		P.saveBtn.setAttribute( 'aria-pressed', on ? 'true' : 'false' );
+		P.saveBtn.classList.toggle( 'is-saved', on );
+		P.saveBtn.querySelector( '.aisleza-pd__save-text' ).textContent = on ? t.savedProduct || 'Saved' : t.saveProduct || 'Save for later';
+	}
+
+	/** Hearts on the shelf boxes of these products follow the list. */
+	function refreshHearts( ids ) {
+		if ( S.world && typeof S.world.setSaved === 'function' ) {
+			ids.forEach( function ( id ) {
+				S.world.setSaved( id, wish.has( id ) );
+			} );
+		}
+	}
+
+	function toggleSaved( id ) {
+		var was = wish.has( id );
+		var now = wish.toggle( id );
+		if ( ! was && ! now ) {
+			announce( fmt( t.savedFull || 'Your list is full (%d products). Remove one to save another.', SAVED_MAX ), true );
+			if ( P.msgEl ) {
+				P.msgEl.textContent = fmt( t.savedFull || 'Your list is full (%d products). Remove one to save another.', SAVED_MAX );
+			}
+			return;
+		}
+		track( now ? 'save' : 'unsave', { id: id } );
+		announce( now ? t.savedOn || 'Saved for later.' : t.savedOff || 'Removed from your saved products.' );
+		renderSaveBtn();
+		renderSavedCount();
+		refreshHearts( [ id ] );
+		if ( S.place.type === 'saved' && ! S.place.shared ) {
+			loadShelf(); // The list behind the window follows (a new list is a new request).
+		}
+	}
+
+	/* ------------------------------------------------------------------ */
 	/* Product panel                                                        */
 	/* ------------------------------------------------------------------ */
 
@@ -1821,10 +2059,15 @@
 			actions.appendChild( el( 'a', { className: 'aisleza-btn aisleza-btn--primary aisleza-btn--big', href: product.permalink, text: product.type === 'grouped' || product.has_options ? t.configureProduct : t.viewProduct } ) );
 		}
 		actions.appendChild( P.tryBtn );
+		P.saveBtn = el( 'button', { type: 'button', className: 'aisleza-btn aisleza-pd__save', onclick: function () {
+			toggleSaved( product.id );
+		} }, [ el( 'span', { className: 'aisleza-heart', 'aria-hidden': 'true' } ), el( 'span', { className: 'aisleza-pd__save-text' } ) ] );
+		actions.appendChild( P.saveBtn );
+		renderSaveBtn();
 		info.appendChild( actions );
 		info.appendChild( P.tryNote );
 		info.appendChild( P.msgEl );
-		if ( S.world && ! S.list && S.place.type === 'search' ) {
+		if ( S.world && ! S.list && listPlace( S.place ) ) {
 			info.appendChild( el( 'button', { type: 'button', className: 'aisleza-btn aisleza-pd__where', onclick: function () {
 				closeDialog();
 				closeDrawer();
@@ -1854,7 +2097,7 @@
 		try {
 			var u = new window.URL( window.location.href );
 			u.hash = '';
-			[ 'aisleza_product', 'aisleza_aisle' ].forEach( function ( k ) {
+			[ 'aisleza_product', 'aisleza_aisle', 'aisleza_saved', 'aisleza_together' ].forEach( function ( k ) {
 				u.searchParams.delete( k );
 			} );
 			Object.keys( params ).forEach( function ( k ) {
@@ -1866,11 +2109,13 @@
 		}
 		var nav = window.navigator;
 		var coarse = window.matchMedia && window.matchMedia( '(pointer: coarse)' ).matches;
-		var copied = t.linkCopied || 'Link copied.';
+		var list = !! params.aisleza_saved;
+		var copied = list ? t.savedLinkCopied || 'Link copied. It opens the 3D store with these products.' : t.linkCopied || 'Link copied.';
+		var box = list ? ui.savedMsg : P.msgEl;
 		var show = function () {
-			if ( P.msgEl ) {
-				P.msgEl.textContent = '';
-				P.msgEl.appendChild( el( 'input', { className: 'aisleza-input aisleza-pd__url', type: 'text', readOnly: true, value: url, 'aria-label': t.shareProduct || 'Share this product', onfocus: function ( e ) {
+			if ( box ) {
+				box.textContent = '';
+				box.appendChild( el( 'input', { className: 'aisleza-input aisleza-pd__url', type: 'text', readOnly: true, value: url, 'aria-label': list ? t.shareSaved || 'Share my list' : t.shareProduct || 'Share this product', onfocus: function ( e ) {
 					e.target.select();
 				} } ) );
 			}
@@ -1882,8 +2127,8 @@
 		if ( nav.clipboard && nav.clipboard.writeText ) {
 			nav.clipboard.writeText( url ).then( function () {
 				announce( copied );
-				if ( P.msgEl ) {
-					P.msgEl.textContent = copied;
+				if ( box ) {
+					box.textContent = copied;
 				}
 			}, show );
 			return;

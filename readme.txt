@@ -5,7 +5,7 @@ Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
 Requires Plugins: woocommerce
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -171,6 +171,11 @@ Aisleza removes its settings. The page you created for the virtual store stays i
 
 == Changelog ==
 
+= 1.1.2 =
+* Added saved products: a heart in the product window saves a product for later on the shopper's device (no account), "Saved products" in the store's drawer lists them, saved products show a heart on their shelf boxes, and "Share my list" gives a link that opens the list in the store.
+* Added lite mode: older phones and slow computers automatically get a lighter 3D store (smaller drawing size, fewer plants, photo boxes instead of 3D models); a store that still draws slowly switches to lite while the shopper walks and remembers it on that device. No setting needed.
+* Fixed: entering the store keeps the whole store in view on themes where the page jumped and cut off its top.
+
 = 1.1.1 =
 * Added links that open the 3D store at a product or an aisle: a product link walks the shopper to the product and opens it, an aisle link walks to that aisle.
 * Added "Share this product" in the product window (the phone's share sheet, or a copied link).
@@ -192,6 +197,9 @@ Aisleza removes its settings. The page you created for the virtual store stays i
 * Includes shelf wall and list views, plus an optional WearGraph virtual try-on integration.
 
 == Upgrade Notice ==
+
+= 1.1.2 =
+Adds saved products (a wishlist with a share link) and an automatic lite mode for older phones and slow computers.
 
 = 1.1.1 =
 Adds product and aisle links, sharing, "Show me where it is" for search, an optional product page button and New / Only N left shelf stickers.
