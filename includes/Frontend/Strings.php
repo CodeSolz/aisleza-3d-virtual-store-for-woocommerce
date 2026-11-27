@@ -158,12 +158,25 @@ final class Strings {
 			/* translators: %d: number of items */
 			'items'                => __( '%d items', 'aisleza-3d-virtual-store-for-woocommerce' ),
 			'itemOne'              => __( '1 item', 'aisleza-3d-virtual-store-for-woocommerce' ),
+			/* translators: 1: average rating such as 4.5, 2: number of reviews */
+			'ratedReviews'         => __( 'Rated %1$s out of 5 from %2$s reviews', 'aisleza-3d-virtual-store-for-woocommerce' ),
+			/* translators: %s: average rating such as 4.5 */
+			'ratedOneReview'       => __( 'Rated %s out of 5 from 1 review', 'aisleza-3d-virtual-store-for-woocommerce' ),
+			/* translators: %d: number of reviews */
+			'reviewsCount'         => __( '(%d reviews)', 'aisleza-3d-virtual-store-for-woocommerce' ),
+			'reviewOne'            => __( '(1 review)', 'aisleza-3d-virtual-store-for-woocommerce' ),
 			/* translators: %s: amount */
 			'subtotalShort'        => __( 'Subtotal %s', 'aisleza-3d-virtual-store-for-woocommerce' ),
 			'subtotal'             => __( 'Subtotal', 'aisleza-3d-virtual-store-for-woocommerce' ),
 			'discount'             => __( 'Discount', 'aisleza-3d-virtual-store-for-woocommerce' ),
 			'shippingTaxLater'     => __( 'Shipping and taxes are calculated at checkout.', 'aisleza-3d-virtual-store-for-woocommerce' ),
 			'shippingLater'        => __( 'Includes tax. Shipping is calculated at checkout.', 'aisleza-3d-virtual-store-for-woocommerce' ),
+			/* translators: %s: amount still needed */
+			'freeShippingLeft'     => __( 'Add %s more for free shipping', 'aisleza-3d-virtual-store-for-woocommerce' ),
+			'freeShippingReached'  => __( 'Your order qualifies for free shipping', 'aisleza-3d-virtual-store-for-woocommerce' ),
+			'alsoLike'             => __( 'You may also like', 'aisleza-3d-virtual-store-for-woocommerce' ),
+			/* translators: 1: product name, 2: price */
+			'alsoLikeGo'           => __( '%1$s, %2$s. Show me where it is', 'aisleza-3d-virtual-store-for-woocommerce' ),
 			'loadingTrolley'       => __( 'Fetching your trolley…', 'aisleza-3d-virtual-store-for-woocommerce' ),
 			'trolleyUnavailable'   => __( 'Your trolley could not be loaded right now.', 'aisleza-3d-virtual-store-for-woocommerce' ),
 			'emptyTrolley'         => __( 'Your trolley is empty. Pick an aisle to start shopping.', 'aisleza-3d-virtual-store-for-woocommerce' ),

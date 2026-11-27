@@ -1,0 +1,19 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "aisleza/store",
+	"version": "1.0.0",
+	"title": "Aisleza 3D Store",
+	"category": "widgets",
+	"icon": "store",
+	"description": "The walk-in 3D store built from your WooCommerce categories. It shows on the live page.",
+	"keywords": [ "3d", "virtual store", "woocommerce", "shop", "aisleza" ],
+	"textdomain": "aisleza-3d-virtual-store-for-woocommerce",
+	"supports": {
+		"html": false,
+		"multiple": false,
+		"reusable": false
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./editor.css"
+}

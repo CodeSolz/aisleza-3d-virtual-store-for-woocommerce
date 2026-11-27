@@ -5,7 +5,7 @@ Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
 Requires Plugins: woocommerce
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,11 +30,13 @@ You do not need 3D models or a new catalog. Choose the categories you want to sh
 * **A furnished store interior.** The free plugin includes a boutique-style interior with oak shelving, shelf lighting, a slatted ceiling and greenery.
 * **Your store name on display.** Your store name appears at the entrance and on the trolley handle.
 * **A trolley connected to WooCommerce.** Customers review items, change quantities, remove products and continue to checkout from the trolley drawer.
+* **Free shipping progress.** When your shipping zone offers free shipping above a minimum order amount, the trolley shows how much more the customer needs to add, with a progress bar, using the same rule as your checkout.
+* **"You may also like" in the trolley.** The cross-sells you set on your products appear in the trolley. Choosing one walks the customer to its shelf.
 * **Checkout near the exit.** Checkout lanes take customers to your existing WooCommerce checkout.
 
 ### Browse, choose and buy
 
-Customers open a product straight from the shelf to see its images, price, availability and short description.
+Customers open a product straight from the shelf to see its images, price, star rating and review count, availability and short description.
 
 * **Simple products:** choose a quantity and add the product to the trolley.
 * **Variable products:** choose the available options, such as size or colour, and add the exact variation. Combinations that do not exist are disabled.
@@ -91,7 +93,7 @@ The free plugin is the complete 3D store described above. [Aisleza Pro](https://
 
 1. Install and activate WooCommerce, then install and activate Aisleza (Plugins → Add New Plugin, search for "Aisleza").
 2. Open **Aisleza** in your WordPress admin menu, below WooCommerce.
-3. Under **Store page**, select **Create virtual store page** to create a draft, or select an existing page containing the `[aisleza]` shortcode.
+3. Under **Store page**, select **Create virtual store page** to create a draft, or select an existing page containing the **Aisleza 3D Store** block or the `[aisleza]` shortcode.
 4. Under **Aisles**, select the product categories to show and set their order.
 5. Under **Store**, set your store name, brand accent colour, page layout and default view. Choose a full-window layout or show the store inside your theme.
 6. Preview the store while logged in. When it is ready, publish the page and enable **Open the virtual store to shoppers**.
@@ -171,6 +173,13 @@ Aisleza removes its settings. The page you created for the virtual store stays i
 
 == Changelog ==
 
+= 1.1.3 =
+* Added free shipping progress in the trolley: "Add $X more for free shipping" with a progress bar, when the customer's shipping zone has free shipping above a minimum order amount. It follows WooCommerce's own free shipping rule.
+* Added star ratings and review counts in the product window (hidden for products without reviews, or when star ratings are turned off in WooCommerce).
+* Added "You may also like" in the trolley, from your products' cross-sells. Choosing one walks the customer to its shelf and opens it.
+* Added the Aisleza 3D Store block for the block editor. New store pages use it; the `[aisleza]` shortcode keeps working.
+* Added an "Upgrade To Premium" link on the Plugins screen and in the Aisleza menu (hidden when Aisleza Pro is active).
+
 = 1.1.2 =
 * Added saved products: a heart in the product window saves a product for later on the shopper's device (no account), "Saved products" in the store's drawer lists them, saved products show a heart on their shelf boxes, and "Share my list" gives a link that opens the list in the store.
 * Added lite mode: older phones and slow computers automatically get a lighter 3D store (smaller drawing size, fewer plants, photo boxes instead of 3D models); a store that still draws slowly switches to lite while the shopper walks and remembers it on that device. No setting needed.
@@ -197,6 +206,9 @@ Aisleza removes its settings. The page you created for the virtual store stays i
 * Includes shelf wall and list views, plus an optional WearGraph virtual try-on integration.
 
 == Upgrade Notice ==
+
+= 1.1.3 =
+Adds free shipping progress and "You may also like" in the trolley, star ratings in the product window and an Aisleza 3D Store block.
 
 = 1.1.2 =
 Adds saved products (a wishlist with a share link) and an automatic lite mode for older phones and slow computers.

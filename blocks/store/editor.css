@@ -1,0 +1,49 @@
+/* The Aisleza 3D Store block's card in the editor (the store itself shows on the live page). */
+.aisleza-block {
+	display: grid;
+	justify-items: center;
+	gap: 6px;
+	padding: 36px 24px;
+	border-radius: 14px;
+	background: linear-gradient(160deg, #0e1d30, #1b2440);
+	color: #f4efe6;
+	text-align: center;
+}
+
+.aisleza-block .aisleza-block__icon {
+	width: 44px;
+	height: 44px;
+	font-size: 44px;
+	color: #0edba5;
+}
+
+.aisleza-block p.aisleza-block__title {
+	margin: 4px 0 0;
+	font-size: 20px;
+	font-weight: 700;
+	color: #fff;
+}
+
+.aisleza-block p.aisleza-block__text {
+	max-width: 440px;
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.5;
+	color: #d6d1c6;
+}
+
+.aisleza-block a.aisleza-block__link {
+	margin-top: 8px;
+	padding: 8px 18px;
+	border-radius: 999px;
+	background: #0edba5;
+	color: #0e1d30;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.aisleza-block a.aisleza-block__link:hover,
+.aisleza-block a.aisleza-block__link:focus {
+	background: #3fe8bb;
+	color: #0e1d30;
+}

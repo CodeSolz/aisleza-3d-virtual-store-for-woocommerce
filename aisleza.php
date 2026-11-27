@@ -3,7 +3,7 @@
  * Plugin Name:          Aisleza — 3D Virtual Store for WooCommerce
  * Plugin URI:           https://aisleza.com/
  * Description:          Turn your online shop into a place to explore. Customers walk 3D aisles built from your categories, pick products off the shelves into a real trolley and pay at your normal WooCommerce checkout.
- * Version:              1.1.2
+ * Version:              1.1.3
  * Requires at least:    6.5
  * Requires PHP:         7.4
  * Requires Plugins:     woocommerce
@@ -21,7 +21,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'AISLEZA_VERSION', '1.1.2' );
+define( 'AISLEZA_VERSION', '1.1.3' );
 define( 'AISLEZA_FILE', __FILE__ );
 define( 'AISLEZA_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AISLEZA_URL', plugin_dir_url( __FILE__ ) );

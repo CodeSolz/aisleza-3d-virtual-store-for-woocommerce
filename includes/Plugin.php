@@ -57,6 +57,7 @@ final class Plugin {
 
 		$shortcode->boot();
 		( new EntryLink() )->boot();
+		( new \Aisleza\Frontend\Block() )->boot();
 		( new \Aisleza\Rest\StoreApiData() )->boot();
 		( new PageTemplate() )->boot();
 

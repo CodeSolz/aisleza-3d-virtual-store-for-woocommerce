@@ -2008,6 +2008,25 @@
 		return product.type === 'simple' || product.type === 'variable';
 	}
 
+	/**
+	 * The product's star rating and review count (Store API average_rating / review_count), when
+	 * the shop uses star ratings and the product has at least one rated review.
+	 */
+	function ratingRow( product ) {
+		var avg = parseFloat( product.average_rating ) || 0;
+		var count = parseInt( product.review_count, 10 ) || 0;
+		if ( false === cfg.ratings || avg <= 0 || count <= 0 ) {
+			return null;
+		}
+		avg = Math.min( 5, avg );
+		var shown = String( Math.round( avg * 10 ) / 10 );
+		var label = count === 1 ? fmt( t.ratedOneReview, shown ) : fmt( t.ratedReviews, shown, count );
+		return el( 'p', { className: 'aisleza-pd__rating', role: 'img', 'aria-label': label }, [
+			el( 'span', { className: 'aisleza-stars', style: '--aisleza-rating:' + Math.round( avg * 20 ) + '%', 'aria-hidden': 'true' } ),
+			el( 'span', { 'aria-hidden': 'true', text: shown + ' ' + ( count === 1 ? t.reviewOne : fmt( t.reviewsCount, count ) ) } )
+		] );
+	}
+
 	function renderProduct() {
 		var product = P.product;
 		var body = ui.product.body;
@@ -2030,6 +2049,10 @@
 
 		var info = el( 'div', { className: 'aisleza-pd__info' } );
 		info.appendChild( el( 'h2', { id: 'aisleza-product-title', className: 'aisleza-pd__name', tabindex: '-1', text: plain( product.name ) } ) );
+		var rating = ratingRow( product );
+		if ( rating ) {
+			info.appendChild( rating );
+		}
 		P.priceEl = el( 'p', { className: 'aisleza-pd__price' } );
 		P.stockEl = el( 'p', { className: 'aisleza-pd__stock' } );
 		info.appendChild( P.priceEl );
@@ -2699,6 +2722,10 @@
 			totals.appendChild( el( 'dd', { text: '−' + money( discountAmount( c ), c ) } ) );
 		}
 		body.appendChild( totals );
+		var freeShip = freeShipping( c );
+		if ( freeShip ) {
+			body.appendChild( freeShip );
+		}
 		body.appendChild( el( 'p', { className: 'aisleza-pd__fine', text: cfg.taxIncl ? t.shippingLater : t.shippingTaxLater } ) );
 
 		var go2 = el( 'p', { className: 'aisleza-trolley__actions' } );
@@ -2710,11 +2737,67 @@
 			closeDialog();
 		}, text: t.keepShopping } ) );
 		body.appendChild( go2 );
+		var also = alsoLike( c );
+		if ( also ) {
+			body.appendChild( also );
+		}
 
 		if ( keepFocus ) {
 			var again = body.querySelector( '[data-focus="' + keepFocus + '"]' );
 			( again && ! again.disabled ? again : body.querySelector( '#aisleza-trolley-title' ) ).focus( { preventScroll: true } );
 		}
+	}
+
+	/**
+	 * How far the trolley is from free shipping (the cart's extensions.aisleza.free_shipping, set
+	 * only when the shopper's shipping zone has free shipping above a minimum order amount).
+	 */
+	function freeShipping( c ) {
+		var fs = c.extensions && c.extensions.aisleza && c.extensions.aisleza.free_shipping;
+		var min = fs ? parseInt( fs.min, 10 ) || 0 : 0;
+		if ( ! min ) {
+			return null;
+		}
+		var left = Math.max( 0, parseInt( fs.left, 10 ) || 0 );
+		var pct = fs.reached ? 100 : Math.max( 0, Math.min( 100, Math.round( 100 * ( min - left ) / min ) ) );
+		var text = fs.reached ? t.freeShippingReached : fmt( t.freeShippingLeft, money( left, c ) );
+		return el( 'p', { className: 'aisleza-freeship' + ( fs.reached ? ' is-reached' : '' ), role: 'status' }, [
+			el( 'span', { text: text } ),
+			el( 'span', { className: 'aisleza-freeship__bar', 'aria-hidden': 'true' }, [ el( 'span', { style: 'width:' + pct + '%' } ) ] )
+		] );
+	}
+
+	/**
+	 * "You may also like": the cart's WooCommerce cross-sells (Store API cart cross_sells, already
+	 * without what is in the trolley). Choosing one walks the shopper to its shelf and opens it.
+	 */
+	function alsoLike( c ) {
+		var picks = ( c.cross_sells || [] ).filter( function ( p ) {
+			return p && p.id;
+		} ).slice( 0, 3 );
+		if ( ! picks.length ) {
+			return null;
+		}
+		var list = el( 'ul', { className: 'aisleza-also__list' } );
+		picks.forEach( function ( p ) {
+			var img = p.images && p.images[ 0 ];
+			var name = plain( p.name );
+			var price = Core.priceParts( p.prices ).text;
+			list.appendChild( el( 'li', null, [
+				el( 'button', { type: 'button', className: 'aisleza-also__item', 'data-focus': 'also-' + p.id, 'aria-label': fmt( t.alsoLikeGo, name, price ), onclick: function () {
+					closeDialog();
+					takeMeTo( p.id );
+				} }, [
+					el( 'img', { className: 'aisleza-also__img', src: img ? img.thumbnail || img.src : cfg.placeholder, alt: '', loading: 'lazy' } ),
+					el( 'span', { className: 'aisleza-also__name', text: name } ),
+					price ? el( 'span', { className: 'aisleza-also__price', text: price } ) : null
+				] )
+			] ) );
+		} );
+		return el( 'section', { className: 'aisleza-also', 'aria-labelledby': 'aisleza-also-title' }, [
+			el( 'h3', { id: 'aisleza-also-title', className: 'aisleza-also__title', text: t.alsoLike } ),
+			list
+		] );
 	}
 
 	function lineRow( item, c ) {

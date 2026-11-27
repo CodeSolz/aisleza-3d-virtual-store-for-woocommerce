@@ -195,6 +195,7 @@ final class Shortcode {
 			'order'       => $sort[1],
 			'sections'    => $sections,
 			'taxIncl'     => wc_tax_enabled() && 'incl' === get_option( 'woocommerce_tax_display_cart' ),
+			'ratings'     => function_exists( 'wc_review_ratings_enabled' ) && wc_review_ratings_enabled(), // WooCommerce → Products → star ratings on reviews.
 			'currency'    => self::currency(),
 			'placeholder' => esc_url_raw( (string) wc_placeholder_img_src( 'woocommerce_single' ) ),
 			'tryon'       => array(

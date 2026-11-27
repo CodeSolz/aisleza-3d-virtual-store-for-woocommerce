@@ -81,6 +81,7 @@ final class SettingsPage {
 		add_action( 'admin_post_aisleza_create_page', array( $this, 'create_page' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'menu_icon' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'upgrade_menu_target' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( AISLEZA_FILE ), array( $this, 'action_links' ) );
 	}
 
@@ -168,6 +169,16 @@ final class SettingsPage {
 				$this->hooks[] = (string) $hook;
 			}
 		}
+		// Last item while Pro isn't active: an outside link (a URL slug with no page), so it adds no screen.
+		if ( self::show_upgrade() ) {
+			add_submenu_page(
+				self::PAGE,
+				__( 'Upgrade To Premium', 'aisleza-3d-virtual-store-for-woocommerce' ),
+				'<span style="color:#c60051;font-weight:700;"><span class="dashicons dashicons-star-filled" style="font-size:17px;width:17px;height:17px;vertical-align:-3px;" aria-hidden="true"></span> ' . esc_html__( 'Upgrade To Premium', 'aisleza-3d-virtual-store-for-woocommerce' ) . '</span>',
+				self::capability(),
+				esc_url( self::upgrade_url( 'wp-menu' ) ) // Core prints a page-less slug straight into href.
+			);
+		}
 	}
 
 	/**
@@ -233,8 +244,62 @@ final class SettingsPage {
 	 */
 	public function action_links( $links ) {
 		array_unshift( $links, sprintf( '<a href="%1$s">%2$s</a>', esc_url( self::url() ), esc_html__( 'Settings', 'aisleza-3d-virtual-store-for-woocommerce' ) ) );
+		if ( self::show_upgrade() ) {
+			array_unshift(
+				$links,
+				sprintf(
+					'<a href="%1$s" target="_blank" rel="noopener noreferrer" style="color:#c60051;font-weight:700;"><span aria-hidden="true">&#9733;</span> %2$s</a>',
+					esc_url( self::upgrade_url( 'pl-actions-links' ) ),
+					esc_html__( 'Upgrade To Premium', 'aisleza-3d-virtual-store-for-woocommerce' )
+				)
+			);
+		}
 
 		return $links;
+	}
+
+	/**
+	 * Whether to offer the upgrade (Plugins row link + menu item): only while Aisleza Pro isn't
+	 * active. Pro defines AISLEZA_PRO_VERSION as soon as it loads, before any admin hook runs.
+	 */
+	public static function show_upgrade(): bool {
+		/**
+		 * Show the "Upgrade To Premium" link and menu item.
+		 *
+		 * @param bool $show True while Aisleza Pro isn't active.
+		 */
+		return (bool) apply_filters( 'aisleza_show_upgrade', ! defined( 'AISLEZA_PRO_VERSION' ) );
+	}
+
+	/**
+	 * The pricing page, tagged with where the click came from.
+	 *
+	 * @param string $source Where the link sits (utm_source).
+	 */
+	public static function upgrade_url( string $source ): string {
+		return add_query_arg(
+			array(
+				'utm_source'   => $source,
+				'utm_medium'   => 'wp-dash',
+				'utm_campaign' => 'gopro',
+			),
+			'https://aisleza.com/pricing/'
+		);
+	}
+
+	/**
+	 * Open the menu's upgrade item (an outside link) in a new tab.
+	 */
+	public function upgrade_menu_target(): void {
+		if ( ! self::show_upgrade() || ! current_user_can( self::capability() ) ) {
+			return;
+		}
+		wp_register_script( 'aisleza-upgrade-menu', false, array(), AISLEZA_VERSION, true );
+		wp_enqueue_script( 'aisleza-upgrade-menu' );
+		wp_add_inline_script(
+			'aisleza-upgrade-menu',
+			'document.querySelectorAll("#toplevel_page_aisleza a[href^=\"https://aisleza.com/pricing/\"]").forEach(function(a){a.target="_blank";a.rel="noopener noreferrer";});'
+		);
 	}
 
 	/**
@@ -452,7 +517,7 @@ final class SettingsPage {
 					echo wp_kses(
 						sprintf(
 							/* translators: %s: shortcode */
-							esc_html__( 'This page does not contain %s yet. Add it to the page, or choose the “Full window” layout, which shows the store whatever the page contains.', 'aisleza-3d-virtual-store-for-woocommerce' ),
+							esc_html__( 'This page does not contain the Aisleza 3D Store block or %s yet. Add one to the page, or choose the “Full window” layout, which shows the store whatever the page contains.', 'aisleza-3d-virtual-store-for-woocommerce' ),
 							'<code>[' . esc_html( Shortcode::TAG ) . ']</code>'
 						),
 						array( 'code' => array() )
@@ -461,7 +526,7 @@ final class SettingsPage {
 				</p>
 			<?php endif; ?>
 		<?php else : ?>
-			<p><?php esc_html_e( 'No store page yet. Create one here (it starts as a draft you publish yourself), or put the shortcode on any page and select that page below.', 'aisleza-3d-virtual-store-for-woocommerce' ); ?> <code>[<?php echo esc_html( Shortcode::TAG ); ?>]</code></p>
+			<p><?php esc_html_e( 'No store page yet. Create one here (it starts as a draft you publish yourself), or add the Aisleza 3D Store block or the shortcode to any page and select that page below.', 'aisleza-3d-virtual-store-for-woocommerce' ); ?> <code>[<?php echo esc_html( Shortcode::TAG ); ?>]</code></p>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="aisleza-admin-create">
 				<input type="hidden" name="action" value="aisleza_create_page">
 				<?php wp_nonce_field( self::NONCE_PAGE ); ?>
@@ -692,7 +757,7 @@ final class SettingsPage {
 	 * @param string $content Page content.
 	 */
 	private static function has_store_shortcode( string $content ): bool {
-		return has_shortcode( $content, Shortcode::TAG );
+		return \Aisleza\Frontend\Block::in_content( $content );
 	}
 
 	/**
@@ -811,7 +876,7 @@ final class SettingsPage {
 				'post_type'    => 'page',
 				'post_status'  => 'draft',
 				'post_title'   => __( 'Virtual Store', 'aisleza-3d-virtual-store-for-woocommerce' ),
-				'post_content' => '<!-- wp:shortcode -->[' . Shortcode::TAG . ']<!-- /wp:shortcode -->',
+				'post_content' => '<!-- wp:' . \Aisleza\Frontend\Block::NAME . ' /-->',
 			),
 			true
 		);
