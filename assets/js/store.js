@@ -1478,6 +1478,8 @@
 		renderFilters( section );
 		if ( S.place.type === 'saved' ) {
 			renderSavedBar();
+		} else if ( S.place.type === 'search' ) {
+			renderSearchBar();
 		}
 
 		if ( S.place.type === 'counter' ) {
@@ -1667,7 +1669,8 @@
 			}
 			var text = S.place.type === 'search' ? fmt( t.noResults, S.place.q ) : t.emptyShelf;
 			ui.shelving.appendChild( notice( text, [
-				el( 'button', { type: 'button', className: 'aisleza-btn', onclick: function () {
+				S.place.type === 'search' ? el( 'button', { type: 'button', className: 'aisleza-btn', onclick: leaveSaved, text: t.backToStore || 'Back to the store' } ) : null,
+				el( 'button', { type: 'button', className: S.place.type === 'search' ? 'aisleza-btn aisleza-btn--ghost' : 'aisleza-btn', onclick: function () {
 					openMap( this );
 				}, text: t.storeMap } ),
 				el( 'a', { className: 'aisleza-btn aisleza-btn--ghost', href: cfg.shopUrl, text: t.regularShop } )
@@ -1887,12 +1890,25 @@
 	}
 
 	/** Back from the saved list to the aisle the shopper was in. */
+	/** Leave the search results or the saved list: back to the aisle the shopper was in. */
 	function leaveSaved() {
+		if ( ui.search ) {
+			window.clearTimeout( ui.searchTimer );
+			ui.search.value = '';
+		}
 		go( { type: 'section', index: S.lastSection }, { quiet: true } );
 		if ( S.world && ! S.list ) {
 			mount.classList.remove( 'is-searching' );
 			S.world.focus();
 		}
+	}
+
+	/** Search results: "Back to the store" in the bar above the shelf (the only other way out was the regular shop). */
+	function renderSearchBar() {
+		var bar = ui.filters;
+		bar.textContent = '';
+		bar.hidden = false;
+		bar.appendChild( el( 'button', { type: 'button', className: 'aisleza-chip aisleza-chip--strong', onclick: leaveSaved, text: t.backToStore || 'Back to the store' } ) );
 	}
 
 	/** The saved list's buttons, in the bar above the shelf: share it (or keep a shared one), back to the store. */

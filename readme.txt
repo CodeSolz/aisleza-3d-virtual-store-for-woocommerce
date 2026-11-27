@@ -5,7 +5,7 @@ Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
 Requires Plugins: woocommerce
-Stable tag: 1.1.3
+Stable tag: 1.1.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -173,6 +173,9 @@ Aisleza removes its settings. The page you created for the virtual store stays i
 
 == Changelog ==
 
+= 1.1.4 =
+* Fixed: search results in the 3D store had no way back into the store (only the Regular shop link). They now show "Back to the store", also when nothing is found, and going back clears the search.
+
 = 1.1.3 =
 * Added free shipping progress in the trolley: "Add $X more for free shipping" with a progress bar, when the customer's shipping zone has free shipping above a minimum order amount. It follows WooCommerce's own free shipping rule.
 * Added star ratings and review counts in the product window (hidden for products without reviews, or when star ratings are turned off in WooCommerce).
@@ -206,6 +209,9 @@ Aisleza removes its settings. The page you created for the virtual store stays i
 * Includes shelf wall and list views, plus an optional WearGraph virtual try-on integration.
 
 == Upgrade Notice ==
+
+= 1.1.4 =
+Search results in the 3D store now have a "Back to the store" button.
 
 = 1.1.3 =
 Adds free shipping progress and "You may also like" in the trolley, star ratings in the product window and an Aisleza 3D Store block.
